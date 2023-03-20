@@ -1,0 +1,17 @@
+.DS_Store
+.auctex-auto/
+_region*
+report.prv/
+IEEEtran.aux
+IEEEtran.fdb_latexmk
+IEEEtran.fls
+IEEEtran.log
+IEEEtran.synctex(busy)
+report.bbl
+report.blg
+report.fdb_latexmk
+report.fls
+report.log
+report.synctex.gz
+report.toc
+report.aux
