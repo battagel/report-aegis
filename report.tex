@@ -1,0 +1,322 @@
+\documentclass[12pt, conference, final, a4paper, onecolumn, compsoc]{IEEEtran}
+% Font size onecolumn or twocolumn Use draft for notes or final for no spacing
+
+% Includegraphics
+\usepackage{graphicx}
+% Bibliography
+\usepackage{natbib}
+% Figure positions
+\usepackage{float}
+% Wrapping URLs
+\usepackage[hyphens]{url}
+
+\begin{document}
+
+
+\title{Using AI to Detect Malware in Object Storage} \author{Author: Matthew
+  Battagel, Supervisor: Theodoros Spyridopoulos} \markboth{Cardiff University -
+  CM3203 - Final Report}{}
+\maketitle{}
+
+\subsection*{Acknowledgments - }
+% Remove section from TOC
+\addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
+\paragraph{}
+I would like to extend my sincere gratitude to my supervisor Theo, family,
+friends, colleagues, and girlfriend Lois for their unwavering support and
+encouragement during my research project. The guidance and expertise provided by
+my supervisor and colleagues were critical in the shaping and success of the
+project. The support and constructive feedback from all parties helped me to
+refine my work notably Lois's constant motivation and dedication were a great
+source of strength throughout the project. I am truly grateful to all of them
+for their contributions.
+
+\bigskip
+
+\begin{abstract}
+    Lorem Ipsum
+\end{abstract}
+
+\pagebreak
+
+    % Problem and background Understanding of the problem and the aims and
+    % objectives of the project Awareness of the background of the problem
+
+    % Detailed analysis of the problem, suitability of approach towards solving
+    % the problem Solution to the problem Approach and design Solution,
+    % implementation Use of and justification for appropriate tools/methods
+
+    % Evaluation Testing and validation Critical appraisal of results
+
+    % Achievement of agreed overall deliverables given in the initial plan for
+    % the final report (or a justified modification of these) Communication and
+    % project management skills Written communication skills Project planning,
+    % control and reflection Interaction and work with the supervisor
+
+
+    % Contents
+    \tableofcontents
+
+
+    \section{Introduction}
+    \subsection*{Overview}
+    \paragraph{}
+
+    \subsection*{Motivation} % Yes
+    % Why am I trying to add malware detection for object storage?
+    % Can I say about HPE? Or shall I say its for the good of the world
+    \paragraph{}
+
+    \subsection*{Project Aims}
+    % Implement an anti virus / malware detection system within an object
+    % storage platform
+    \paragraph{}
+
+    \subsection*{Important outcomes / targets}
+    % Overview of project Aims Outcomes
+    \paragraph{}
+
+
+    \section{Background}
+
+    % background should be more previous research material etc. Include
+    % competition and potential software to use e.g. ClamAV, MinIO.
+    % Include the first things you find when googling the same topic as diss.
+
+    % Where to put background info on object storage and malware? Not sure
+
+    \subsection*{Malware}
+    \paragraph{}
+    Malware is a type of software designed to harm or exploit computer systems,
+    networks, and users. It includes a wide range of harmful programs, such as
+    viruses, worms, Trojans, ransom-ware, spyware, and adware. Malware can be
+    used to steal sensitive information, gain unauthorized access to systems,
+    damage or destroy data, and perform other malicious activities. Malware can
+    be distributed through various channels, such as email attachments,
+    malicious web-sites, software downloads, and infected removable media. It is
+    a serious threat to computer security and can cause significant damage to
+    storage devices if left untreated.
+    % !! And has the potential to be laying dormant inside peoples computers
+
+    \paragraph{}
+    Malicious files can be particularly risky for storage devices in cloud
+    environments due to their shared nature. In a cloud storage environment,
+    multiple users and applications can access and store data on the same
+    physical storage infrastructure. This means that an infected file can
+    quickly spread and infect other files and users, compromising the security
+    and integrity of the entire system. Moreover, cloud storage providers may
+    not be able to isolate and contain malware as easily as with traditional
+    storage systems. As a result, cloud storage users need to be extra vigilant
+    and take proactive measures, such as implementing antivirus software,
+    regular backups, and secure access controls, to mitigate the risks of
+    malware infections.
+
+    \subsection*{Anti-Virus}
+    % Create a connection between paragraphs here.
+    % Include Citation
+    \paragraph{}
+    In the context of modern IT solutions, ensuring robust security measures is
+    crucial to guarantee reliable operations and safeguard data against threats.
+    Companies can face severe penalties, up to XXXX, for failing to comply with
+    data protection regulations in the event of a breach. Therefore, it is
+    imperative that IT products offer comprehensive security features, mainly
+    including built-in antivirus capabilities, to protect against malicious
+    attacks and prevent data loss.
+
+    \paragraph{}
+    Modern Anti-Viruses mostly work using a combination of signature-based and
+    heuristic detection methods. Signature-based detection works by comparing
+    the file being scanned against a database of known malicious file
+    signatures. If a match is found, the file is flagged as malicious. This
+    method is effective at detecting known malware, but it is not effective at
+    detecting new or unknown malware. Heuristic detection, on the other hand,
+    works by analyzing the behavior of the file being scanned and comparing it
+    against a database of known malicious behaviors. This method is more
+    effective as it looks at practices used by malware, such as common imports,
+    and therefore has potential to detect previously unknown malware.
+
+    % EXPLAIN HOW MACHINE LEARNING CAN BE USED??
+    % Tie it into next paragraphs
+
+    \subsection*{Artificial Intelligence}
+    % What is AI?
+    % Why use AI?
+    % Is it better than regular detection?
+    % How does this affect our definition of malware and antivirus?
+
+    \paragraph{}
+    % SUBSEQUENTLY EXPLAIN WHAT AI IS?
+
+    \subsection*{Object Storage}
+    \paragraph{}
+    Object storage is a type of data storage architecture that manages data as
+    discrete units known as objects. Each object contains data, metadata
+    (information about the object), and a unique identifier that enables it to
+    be located and retrieved. Object storage systems are designed to handle
+    large amounts of unstructured data, such as files, images, videos, and other
+    multimedia content and have become increasingly popular in recent years with
+    a compound annual growth rate of 13.6\% \citep{object-storage-market}.
+
+    \paragraph{}
+    Unlike traditional storage architectures like file or block storage, object
+    storage does not organize data in a hierarchical directory structure or use
+    fixed-sized blocks. Instead, it allows data to be stored and accessed
+    independently of the underlying physical storage infrastructure. This makes
+    it easier to scale storage capacity and performance, as well as to implement
+    features like data replication, versioning, and encryption. Object storage
+    is often used in cloud computing environments, where it is a popular option
+    for storing and managing data in distributed systems.
+
+    \subsection*{MinIO}
+    \paragraph{}
+    MinIO is a high-performance, open-source, distributed object storage system
+    that is designed to be cloud-native. It provides Amazon S3-compatible API
+    for developers to build cloud-native applications. MinIO is designed to
+    scale horizontally and can be deployed on a wide variety of hardware and
+    software platforms \citep{minio}. It is written in Go and is available under
+    the Apache License 2.0 \citep{minio-repo}. MinIO has several features that
+    make it an attractive choice for cloud-native applications. It is
+    fault-tolerant, with data being automatically distributed across multiple
+    drives and servers (erasure) to ensure high availability. Additionally,
+    MinIO is highly performant, with a focus on optimizing for SSDs and NVMe
+    drives \citep{minio}.
+
+    \paragraph{}
+    Currently, MinIO does not provide built-in antivirus capabilities. This
+    means that users must rely on third-party antivirus software to protect
+    their data from malware. However, this can be a challenge for users who want
+    to use MinIO in cloud environments, as antivirus software is often
+    incompatible with cloud-native applications. This is because antivirus
+    software is designed to run on a single machine and is not designed to scale
+    horizontally. As a result, antivirus software is not well-suited for
+    cloud-native applications, which are often deployed in distributed
+    environments. Moreover, antivirus software is often resource-intensive and
+    can slow down the performance of cloud-native applications if scalability is
+    not properly considered. This is particularly problematic for cloud-native
+    applications that require high performance, such as video streaming and
+    machine learning.
+
+    \paragraph{}
+    Adding an in-built antivirus capabilities to MinIO would allow users to
+    protect their data from malware without having to rely on third-party tools.
+    This would also allow users to run antivirus software in a cloud-native with
+    scalability and performance in mind. In this report we will discuss
+    different approaches that can be taken to embed an antivirus engine into
+    MinIO and evaluate their performance and scalability.
+
+    \subsection*{ClamAV}
+    % Describe inner workings!?!?!
+    % Open-source
+
+    \paragraph{}
+    Open-source antivirus software is a popular choice for cloud-native and
+    distributed applications. This is because open-source software is often
+    free, which makes it a cost-effective option for users. Additionally,
+    open-source software is often more customizable and flexible than
+    proprietary software, which makes it easier to integrate into cloud-native
+    applications. Open-source software is also often more secure than
+    proprietary software, as it is often reviewed by a large community of
+    developers and users.
+
+    \paragraph{}
+    % !!CHECK does it focus on distribution??
+    One of the most popular open-source antivirus software is ClamAV. It is
+    written in C and is available under the GNU General Public License
+    \citep{clamav-repo}. ClamAV is designed to be lightweight and fast, with a
+    focus on distributed and scalable scanning. ClamAV uses a combination of
+    signature-based and heuristic detection methods as mentioned earlier with a
+    reported accuracy of XXXXX. It uses an open-source database of known
+    malicious files and behaviors which is updated regularly by the ClamAV
+    community.
+
+    \paragraph{}
+    % !!CHECK is this what we do in the end??
+    % Can we use AI to make it better? How?
+    For prototype implementation and benchmarking of the system architecture, we
+    will use ClamAV as our antivirus engine. This can then be replaced or
+    upgraded with a more advanced antivirus engine that utilises AI.
+
+    \subsection*{}
+    % Malware Artificial Intelligence Object Storage Context
+
+    \section{Specification and Design}
+
+    % System requirements specification ***
+
+    % Optimal architecture Packaging with K8s Make sure to match with
+    % specification
+
+    \subsection*{Specification}
+    \paragraph{}
+
+    \subsection*{Architecture}
+    \subsubsection*{Design 1}
+    \paragraph*{}
+
+    \subsubsection*{Design 2}
+    \paragraph{}
+
+    \subsubsection*{Design 3}
+    \paragraph{}
+
+    \subsubsection*{Design 4}
+    \paragraph{}
+
+    \subsubsection*{Optimal Design}
+    \paragraph{}
+
+    \subsection*{Packaging}
+
+
+    \section{Implementation}
+    \subsection*{}
+    \subsection*{Packaging}
+
+    \section{Results and Evaluation}
+    % Evaluate against specification
+    \subsection*{}
+
+    \section{Future Work}
+    \subsection*{}
+
+    \section{Conclusions}
+    \subsection*{}
+
+    \section{Reflection on Learning}
+    \subsection*{}
+
+    \section{Appendix}
+    \bibliographystyle{cardiff} \bibliography{references}
+
+  \end{document}
+
+  % TEMPLATED
+  % \begin{figure}[!ht]
+  %   \centering \includegraphics[scale=.55]{assets/extracred}
+  %   \caption{Bouncing and pitching motion as a function of time}
+  %   \label{fig:bounceAndPitch}
+  % \end{figure}
+
+  % \begin{table}[!ht]
+  %   \begin{center}
+  %     \caption{Calculated values}
+  %     \label{tab:calculated}
+  %     \begin{tabular}{|c|c|}
+  %       \hline
+  %     \end{tabular}
+  %   \end{center}
+  % \end{table}
+
+  % Appendix \onecolumn \textwidth=456pt \paperwidth=577pt \hoffset=-30pt
+  % \newpage
+  % \newpage
+  % \clearpage
+
+
+  % \pagestyle{headings}
+  % \section{Appendix A}
+  % \centering Heading \footnotesize
+
+  % \normalsize
+
+  % \csvautolongtable{assets/vibProj.csv}
