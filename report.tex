@@ -7,6 +7,8 @@
 \usepackage{natbib}
 % Figure positions
 \usepackage{float}
+% Wrapping figures
+\usepackage{wrapfig}
 % Wrapping URLs
 \usepackage[hyphens]{url}
 
@@ -21,7 +23,7 @@
 \subsection*{Acknowledgments - }
 % Remove section from TOC
 \addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
-\paragraph{}
+
 I would like to extend my sincere gratitude to my supervisor Theo, my colleague
 Harry, friends, family, and Lois for their unwavering support and encouragement
 during my project. Their combined expertise and guidance provided were critical
@@ -57,7 +59,7 @@ for their contributions.
 
     \section{Introduction}
     \subsection*{Overview}
-    \paragraph{} % Data growth and object storage
+     % Data growth and object storage
     The exponential growth of data generation has made data storage an
     increasingly important aspect for both individuals and organizations alike.
     Object storage has emerged as a promising solution due to its ability to
@@ -66,9 +68,9 @@ for their contributions.
     objects with related metadata and unique identifiers, allowing for efficient
     and cheap storage within buckets.
 
-    % !! REWORD LAST BIT
+    % TODO REWORD LAST BIT
 
-    \paragraph{} % Market and competition
+     % Market and competition
     One of the most widely used object storage platforms is Amazon S3, which
     provides a highly scalable and reliable solution for storing data. However,
     an open-source alternative called MinIO has emerged as a promising
@@ -81,7 +83,7 @@ for their contributions.
     MinIO is designed to scale out horizontally to ensure that it can handle the
     demands of large-scale applications.
 
-    \paragraph{} %Scalability
+     %Scalability
     Scalability is made simple by allowing multiple types of hardware platforms
     to work together in separate nodes each with their own compute and storage.
     This is extremely attractive for customers who want to utilises their
@@ -90,7 +92,7 @@ for their contributions.
     cheaper solution without compromising on the high performance, reliability
     and scalability of the S3 platform.
 
-    \paragraph{} %Downsides
+     %Downsides
     While MinIO is a great alternative to Amazon S3, it does not offer any form
     of malware detection integration. This could put customers off from choosing
     MinIO as a viable platform to migrate to from Amazon S3 or leave existing
@@ -102,7 +104,7 @@ for their contributions.
     \subsection*{Motivation}
     % Why am I trying to add malware detection for object storage?
     % Can I say about HPE? Or shall I say its for the good of the world
-    \paragraph{}
+
     Due to the high amount of unstructured data expected to be both written and
     read to the object store, there are increased risk of encountering malicious
     files. Therefore malware detection within object storage is crucial in
@@ -119,10 +121,8 @@ for their contributions.
     this project is to implement malware detection within MinIO while being
     mindful to not impact the scalability or performance of the platform.
 
-    \subsection*{Project Aims}
-    % Implement an anti virus / malware detection system within an object
-    % storage platform
-    \paragraph{}
+    \subsection*{Project Aims} % What the project aims to achieve
+
     This project aims to supply an end-to-end solution for detecting malware
     within the MinIO object storage platform with three main requirements. The
     solution should be able to detect the latest uploads to the object store and
@@ -141,10 +141,46 @@ for their contributions.
       resources and changing the platform.
     \end{itemize}
 
-    \subsection*{Important outcomes / targets}
-    % Overview of project Aims Outcomes
-    \paragraph{}
+    % TODO Maybe not here?
+    \subsection*{Milestones} % Breakdown of key targets through project
 
+    There are many key milestones that can be used to measure the progress of
+    the project through the duration of its implementation. It is worth noting
+    that these milestones were created before the implementation of the solution
+    and therefore are subject to change.
+
+    % TODO I am talking about a lot of specific things here. Do they know what it means?
+    \begin{itemize}
+      \item Setup local ClamAV instance
+      \item Setup local MinIO instance
+      \item Setup local Kafka instance
+      \item Detect PUT message on Kafka
+      \item Read JSON of message to find bucket and object path
+      \item Create AV manager service in GoLang
+      \item Request GET on Object using message data
+      \item Scan Object using Clamd
+      \item Act on result of scan - Add tags, "scanned", "date\_scanned"
+      \item Configuration file using viper
+      \item Add metric collection with Prometheus
+      \item Add structured logging with zap
+      \item Create Database of Audit Logs with postgresql
+      \item Termination of connections to services
+      \item Create tests for each package using mockery
+
+      \item Prepare for Kubernetes deployment with k3d
+      \item Containerise Aegis with Docker
+      \item Automatically configure and start MinIO, Kafka, Clamd, Postgresql,
+      Prometheus and Aegis with Helm
+      \item Port forward MinIO out of the cluster
+      \item Load balancing / performance analysis for Clamd
+      \item Expose Postgresql and Prometheus for analytics
+      \item Prepare configurations for demo, release etc
+      \item Clean-up version control and write readme.me
+    \end{itemize}
+
+    These milestones can be broken down even further into smaller tasks. These are best
+    represented in Gantt / burndown charts which can be found in the appendix.
+    % TODO REF
 
     \section{Background}
 
@@ -158,9 +194,8 @@ for their contributions.
     % Insert background material
     %
 
-
     \subsection*{Amazon S3 Malware Detection} % How does amazon do it?
-    \paragraph{}
+
     As MinIO's largest competitor, this project draws a lot of inspiration from
     Amazon S3s integrated malware detection blog page \citep{amazon-md}. The
     blog explains Amazons current approach for managing malware detection within
@@ -180,62 +215,300 @@ for their contributions.
     system that can match these methods is important for offering a matching
     level of scalability and security within MinIO.
 
+    % Talk about standard flow and two bucket flow - useful in designing
+
+    % Amazon use stub files
+
     \subsection*{} % How does signature detection work?
-    \paragraph{}
+
 
     \subsection*{} % Best ways of implementing AV into a micro-service?
-    \paragraph{}
 
-    \subsection*{} % How does ClamAV work?
-    \paragraph{}
+
+    \subsection*{} % How does ClamAV work? What is clamd
+
     % Malware Artificial Intelligence Object Storage Context
 
     \section{Specification and Design}
 
-    % System requirements specification ***
-
-    % Optimal architecture Packaging with K8s Make sure to match with
-    % specification
-
     \subsection*{Specification}
+
+    The specification for this project is to help guide the project to fufill
+    the aims set out in the previous section. The specification is broken down
+    into three main sections; functional requirements, non-functional
+    requirements and constraints.
+
+    \subsubsection*{Functional Requirements}
+
+    Functional requirements are
+
+
+    % TODO Say about we need to keep up so that people are not waiting and the system
+    % does not get behind. Maybe use metrics to show how we DO keep up?
+    %
+
+    % TODO What to do with infected files
+    % TODO What to do with files that are not scanned
+    % TODO How to remove infinate loops
+    % TODO How to handle large files
+    % TODO How many AVs could be used?
+    % TODO Security issue of not checking put tagging
+
+    \subsubsection*{Non-Functional Requirements}
+
+    Non-functional requirements are
+
+    \subsubsection*{Constraints}
     \paragraph{}
+
+    The constraints are the limitations that the solution must adhere to. The
+    main constraint of the project is the strict time limit given to the
+    project. There are a total of 12 weeks to achieve a production ready product
+    which will greatly limit the scope of the project. This means accurately
+    prioritising the features that are most important to the project while also
+    balancing the time spent to implement them. The second constraint is the
+    limited resources available to the project.
+
+
+    Another constraint of the project is that all the external software used
+    must be open source / available for commercial use under license or fee.
+    This is to ensure that the project is legally viable if the solution was to
+    be used commercially.
+
+
+    The final constraint is that the solution must % TODO
+
 
     \subsection*{Architecture}
-    \subsubsection*{Design 1}
-    \paragraph*{}
 
     \paragraph{}
-    \subsubsection*{Design 3}
+    Given the specification above, various potential architectures can be
+    created and evaluated. An optimal design will then be chosen based on which
+    design fits the specification best.
+
+    % TODO Crop the diagrams to remove the white space
+
+    % Post-Write
+    \subsubsection*{Design 1}
+    \paragraph{}
+    This design makes use of the performance benefits of MinIO by allowing PUTs
+    to be initially written to the bucket without being scanned. The design
+    then uses a event queue compatible with MinIO to keep track of all the files
+    that have been uploaded. The queue is then used to trigger a scan of the
+    file once an antivirus is available. The design is shown in figure
+    \ref{fig:postWriteArch}.
+
+    \begin{wrapfigure}{r}{0.45\textwidth}
+        \includegraphics[scale=.4]{diagrams/post-write.png}
+        \caption{Post-Write Architecture}
+        \label{fig:postWriteArch}
+    \end{wrapfigure}
+
+    This design has many benefits over other potential implementations. Firstly,
+    it uses the storage provided by MinIO to store all incoming files without
+    having to manage a separate storage solution. This removes a lot of
+    complexity from the solution by not having to account for a number of
+    failure conditions that could occur with a high availability, production
+    ready storage solution. For example, the solution would not be responsible for
+    handling partial writes, loss of data, or data corruption. Removing this
+    responsibility allows the solution to focus on the core functionality of the
+    project, the scanning of files, which is essential for keeping the project
+    within the time constraints.
+
+    Secondly, the design also makes use of the integrated event queue provided
+    by MinIO. This again removes responsibility from the solution by differing the
+    scalability and reliability requirements of an event queue to MinIO''.
+
+    %TODO DO THEY KNOW WHAT AEGIS IS?
+    %TODO Change the diagrams to be service ambiguous
+
+    Lastly, having Aegis dispatch the files to a scalable number of antivirus
+    scanners allows the solution to scale to meet the demands of the system.
+    This meets a key requirement as the solution is expected to have the
+    capacity for a large number of operations. This method does require the use
+    of a load balancer to effectively distribute the load across the available
+    antivirus scanners.
+
+    The design also has a number of drawbacks. Firstly, the design still
+    requires a small about of cache to temporarily store the object when it is
+    being dispatched to the antivirus. Provisioning of this cache has to be
+    large enough to handle the largest file possible to be uploaded to the
+    object store. In reality, this cache would be provisioned even larger to
+    allow for the temporary storage of multiple objects while multiple scans are
+    being performed asynchronously. In addition, the cache needs to be large
+    enough to ensure that the system does not become overwhelmed by the number
+    of objects being scanned as the system scales. This is a minor issue as
+    store capacity is cheap and the provisioning of the cache easy to scale up.
+
+    % TODO Do they know what get/put is?
+    % TODO Do they know distributed storage topologies?
+
+    The second drawback is that, for each event, Aegis makes a get request for the
+    object to be scanned. This effectively doubles the number of requests made
+    to the object store. This also means that Aegis must have the ability to get
+    any file expected to be scanned and therefore must have access to the whole
+    storage network. The impact of this drawback is mitigated as the solution is expected to be
+    deployed on the same network as the object store which should reduce the
+    latency of each request made by Aegis. However, this still leaves MinIO to
+    handle twice as many requests with the performance loss being noticed mainly
+    on more distributed storage topologies.
+
+    Thirdly, the design only allows for a single Aegis instance to dispatch all
+    incoming objects to available scanners. This is a potential bottleneck for
+    the system as this instance could become overwhelmed by the number of
+    requests it is receiving. This is a minor issue as the dispatching of
+    objects to scanners is not as performance intensive as other areas of the
+    solution, such as the actual scanning, and therefore it is not expected to
+    be a major bottleneck.
+
+    Lastly, any object uploaded to the store will have a certain period of time
+    where it remains unchecked. In this time, the user could potentially
+    download an unscanned object or the object could cause harm to the store
+    before it is detected. Although the handling of infected objects is out of
+    scope, in an actual implementation of the solution, the user could be made
+    unable to download unscanned objects until they have been scanned.
+
+    % TODO AWS does this with S3 events 'standard flow'
 
     \subsubsection*{Design 2}
     \paragraph{}
 
+    This design created a wrapper around MinIO that the user interacts with
+    instead of MinIO. This means that all puts go through Aegis before being
+    uploaded to the object store. The design is shown in figure
+    \ref{fig:uploadQueueArch}.
+
+    \begin{wrapfigure}{r}{0.45\textwidth}
+        \centering \includegraphics[scale=.4]{diagrams/upload-queue.png}
+        \caption{Upload Queue Architecture}
+        \label{fig:uploadQueueArch}
+    \end{wrapfigure}
+
+    The main benefit of this design is that the user interacts only with Aegis
+    when uploading files. This means that all incoming files can be stored
+    within a temporary storage before ever entering the object store. This
+    offers the best protection against malicious files as the user cannot
+    ever download an unscanned or infected file as it is never uploaded to the
+    object store. Infected files can then either be deleted or moved to a
+    separate quarantine store for analysis.
+
+    This designs main advantage also comes with a major drawback. This design
+    requires Aegis to handle the full throughput of all the puts to the system.
+    Aegis then has the full responsibility of being available to all puts and,
+    in a failure scenario, to handle the recovery of the system. Additionally,
+    the cache provisioned must be large enough to handle the largest files at
+    maximum throughput with extra room for unexpected delays. This negatively
+    affects the scope of the project by requiring the solution to prioritise
+    features that are already covered by MinIO.
+
+    % TODO Cover mitigation
+
+    % TODO is this already covered?
+    Because MinIO is dependent on Aegis to handle the puts, MinIO must wait to
+    be passed incoming objects sequentially after Aegis has finished processing
+    the previous object. This removes the potential for aggregate performance where
+
+    % TODO Talk about how AWS uses this method 'Two Bucket System Flow'
+
+    \subsubsection*{Design 3}
+    \paragraph{}
+
+    % TODO Edit diagram to show quarantine?
+
+    Design three is very similar to the second design, however, instead of wrapping
+    outside the MinIO service, it intercepts the writes from the client before
+    objects are written to the object store. With this interception, Aegis can scan
+    the object and decide whether to allow the object to be written to the store
+    or to quarantine the object. The design is shown in figure
+    \ref{fig:writeInterceptArch}.
+
+    \begin{wrapfigure}{r}{0.4\textwidth}
+        \centering \includegraphics[scale=.3]{diagrams/write-intercept.png}
+        \caption{Write Interception Architecture}
+        \label{fig:writeInterceptArch}
+    \end{wrapfigure}
+
+    This design has similar benefits as the second design. It
+    offers the most protection against malicious files by never allowing either
+    unscanned or infected objects to be stored in the object store. However, it
+    also has similar drawbacks. This is because Aegis is still in sequence with
+    MinIO meaning that for optimal throughput, Aegis would need to match the
+    performance of MinIO.
+
+    Similar to the upload queue design, this design also requires Aegis to have a
+    large cache to handle the largest files at maximum throughput. This cache
+    must also be large enough to handle the number of objects being put by MinIO
+    into the store. This issue cannot be mitigated without the risk of
+    compromising performance at increased loads.
+
+    However, this design does have an advantage over the second design as there is
+    less responsibility placed on Aegis to be as failure tolerant. MinIO is
+    still directly responsible for accepting objects into the store and
+    therefore is still responsible for the recovery of the system in a failure
+    scenario. This allows the scope to focus on more related features to malware scanning.
+
     \subsubsection*{Design 4}
     \paragraph{}
 
+    The final design distributes Aegis onto each node in the object store. Each
+    Aegis instance relies on. This means that each node has a local instance of
+    Aegis that is responsible for scanning objects before they are written to
+    the store. The design is shown in figure \ref{fig:perNodeArch}.
+
+    \begin{wrapfigure}{r}{0.5\textwidth}
+        \centering \includegraphics[scale=.3]{diagrams/per-node.png}
+        \caption{Antivirus per Node Architecture}
+        \label{fig:perNodeArch}
+    \end{wrapfigure}
+
+    This design makes use of the distributed nature of MinIO to match the demand
+    when scaling out the system. As more nodes are added, more Aegis instances
+    are added to handle the increased scanning demand.
+
+    % Reduced need for cache
+
+    % Antivirus pod can scale on its own
+
+    % Maybe explain erasure more?
+
+    The major drawback of this design is that it replies on the ability to scan
+    whole files by only using data on a single node. In actual implementations,
+    MinIO makes use of erasure coding to add increased redundancy to the store.
+    Erasure coding splits files into multiple parts, and calculates an
+    additional part that stores the parity. These parts are then distributed
+    among all nodes in the system. This means that the Aegis instance on each
+    node only has access to the part available on their node and therefore will
+    not be able to reconstruct the whole file.
+    % TODO Reference this
+
     \subsubsection*{Optimal Design}
-    \paragraph{}
+
+    % TODO what if admin wants to store malware? Who are we to judge?
 
     \section{Implementation}
-    \subsection*{Event Bus}
+    \subsection*{Event Queue}
     % Kafka
 
     \subsection*{Packaging}
 
     \section{Results and Evaluation}
     % Evaluate against specification
+    % Compare to MinIO
+    % Find figures like average scan
+    % Compare local vs cluster
     \subsection*{}
 
-    \section{Future Work}
+    \section{Product Issues / Future work} % What you would do next time
     \subsection*{}
 
     \section{Conclusions}
     \subsection*{}
 
-    \section{Reflection on Learning}
+    \section{Reflection on Learning} % Fuck knows
     \subsection*{}
 
     \section{Appendix}
+    % TODO Add figues and tables to appendix
     \bibliographystyle{cardiff} \bibliography{references}
 
   \end{document}
@@ -270,8 +543,11 @@ for their contributions.
   % \normalsize
 
   % \csvautolongtable{assets/vibProj.csv}
+  %
+
+  % I DONT THINK THIS IS WHAT THEY MEANT BY BACKGROUND
     % \subsection*{Malware}
-    % \paragraph{}
+    %
     % Malware is a type of software designed to harm or exploit computer systems,
     % networks, and users. It includes a wide range of harmful programs, such as
     % viruses, worms, Trojans, ransom-ware, spyware, and adware. Malware can be
@@ -281,9 +557,9 @@ for their contributions.
     % malicious web-sites, software downloads, and infected removable media. It is
     % a serious threat to computer security and can cause significant damage to
     % storage devices if left untreated.
-    % % !! And has the potential to be laying dormant inside peoples computers
+    % % TODO And has the potential to be laying dormant inside peoples computers
 %
-    % \paragraph{}
+    %
     % Malicious files can be particularly risky for storage devices in cloud
     % environments due to their shared nature. In a cloud storage environment,
     % multiple users and applications can access and store data on the same
@@ -299,7 +575,7 @@ for their contributions.
     % \subsection*{Anti-Virus}
     % % Create a connection between paragraphs here.
     % % Include Citation
-    % \paragraph{}
+    %
     % In the context of modern IT solutions, ensuring robust security measures is
     % crucial to guarantee reliable operations and safeguard data against threats.
     % Companies can face severe penalties, up to XXXX, for failing to comply with
@@ -308,7 +584,7 @@ for their contributions.
     % including built-in antivirus capabilities, to protect against malicious
     % attacks and prevent data loss.
 %
-    % \paragraph{}
+    %
     % Modern Anti-Viruses mostly work using a combination of signature-based and
     % heuristic detection methods. Signature-based detection works by comparing
     % the file being scanned against a database of known malicious file
@@ -329,11 +605,11 @@ for their contributions.
     % % Is it better than regular detection?
     % % How does this affect our definition of malware and antivirus?
 %
-    % \paragraph{}
+    %
     % % SUBSEQUENTLY EXPLAIN WHAT AI IS?
 %
     % \subsection*{Object Storage}
-    % \paragraph{}
+    %
     % Object storage is a type of data storage architecture that manages data as
     % discrete units known as objects. Each object contains data, metadata
     % (information about the object), and a unique identifier that enables it to
@@ -342,7 +618,7 @@ for their contributions.
     % multimedia content and have become increasingly popular in recent years with
     % a compound annual growth rate of 13.6\% \citep{object-storage-market}.
 %
-    % \paragraph{}
+    %
     % Unlike traditional storage architectures like file or block storage, object
     % storage does not organize data in a hierarchical directory structure or use
     % fixed-sized blocks. Instead, it allows data to be stored and accessed
@@ -354,7 +630,7 @@ for their contributions.
 %
 %
     % \subsection*{MinIO}
-    % \paragraph{}
+    %
     % MinIO is a high-performance, open-source, distributed object storage system
     % that is designed to be an alternative to Amazon S3. It is S3 compatiable
     % allowing for almost instantanous migration from Amazon to MinIO. MinIO is
@@ -368,7 +644,7 @@ for their contributions.
     % MinIO is highly performant, with a focus on optimizing for SSDs and NVMe
     % drives \citep{minio}.
 %
-    % \paragraph{}
+    %
     % Currently, MinIO does not provide built-in antivirus capabilities. This
     % means that users must rely on third-party antivirus software to protect
     % their data from malware. However, this can be a challenge for users who want
@@ -383,7 +659,7 @@ for their contributions.
     % applications that require high performance, such as video streaming and
     % machine learning.
 %
-    % \paragraph{}
+    %
     % Adding an in-built antivirus capabilities to MinIO would allow users to
     % protect their data from malware without having to rely on third-party tools.
     % This would also allow users to run antivirus software in a cloud-native with
@@ -395,7 +671,7 @@ for their contributions.
     % % Describe inner workings!?!?!
     % % Open-source
 %
-    % \paragraph{}
+    %
     % Open-source antivirus software is a popular choice for cloud-native and
     % distributed applications. This is because open-source software is often
     % free, which makes it a cost-effective option for users. Additionally,
@@ -405,8 +681,8 @@ for their contributions.
     % proprietary software, as it is often reviewed by a large community of
     % developers and users.
 %
-    % \paragraph{}
-    % % !!CHECK does it focus on distribution??
+    %
+    % % TODOCHECK does it focus on distribution??
     % One of the most popular open-source antivirus software is ClamAV. It is
     % written in C and is available under the GNU General Public License
     % \citep{clamav-repo}. ClamAV is designed to be lightweight and fast, with a
@@ -416,8 +692,8 @@ for their contributions.
     % malicious files and behaviors which is updated regularly by the ClamAV
     % community.
 %
-    % \paragraph{}
-    % % !!CHECK is this what we do in the end??
+    %
+    % % TODOCHECK is this what we do in the end??
     % % Can we use AI to make it better? How?
     % For prototype implementation and benchmarking of the system architecture, we
     % will use ClamAV as our antivirus engine. This can then be replaced or
