@@ -15,7 +15,7 @@
 \begin{document}
 
 
-\title{Using AI to Detect Malware in Object Storage} \author{Author: Matthew
+\title{Malware Detection within Object Storage} \author{Author: Matthew
   Battagel, Supervisor: Theodoros Spyridopoulos} \markboth{Cardiff University -
   CM3203 - Final Report}{}
 \maketitle{}
@@ -25,7 +25,7 @@
 \addtocontents{toc}{\protect\setcounter{tocdepth}{-1}}
 
 I would like to extend my sincere gratitude to my supervisor Theo, my colleague
-Harry, friends, family, and Lois for their unwavering support and encouragement
+Harry, friends, family, and Lo for their unwavering support and encouragement
 during my project. Their combined expertise and guidance provided were critical
 in the shaping and execution of the project. I am truly grateful to all of them
 for their contributions.
@@ -59,6 +59,7 @@ for their contributions.
 
 \section{Introduction}
 \subsection*{Overview}
+\paragraph{}
 % Data growth and object storage
 The exponential growth of data generation has made data storage an increasingly
 important aspect for both individuals and organizations alike. Object storage
@@ -120,167 +121,164 @@ being mindful to not impact the scalability or performance of the platform.
 
 \subsection*{Project Aims} % What the project aims to achieve
 
-This project aims to supply an end-to-end solution for detecting malware within
-the MinIO object storage platform with three main requirements. The solution
-should be able to detect the latest uploads to the object store and scan them.
-It should be able to perform this function without significantly impacting the
-performance of the object store. The solution should also scale alongside MinIO
-to ensure that it does not bottleneck the object store at high loads. These main
-three aims can be quantified so that an accurate evaluation of the solution can
-be made at the end of the project.
-
-\begin{itemize}
-  \item Detection of malware within the object store should match 100\% of the
-        malware detection rate as the stand-alone antivirus.
-  \item Performance of the solution to be within 10\% of the performance of the
-        stand-alone object store, MinIO.
-  \item Retain the previous metric while both increasing the available resources
-        and changing the platform.
-\end{itemize}
-
-% TODO Maybe not here?
-\subsection*{Milestones} % Breakdown of key targets through project
-
-There are many key milestones that can be used to measure the progress of the
-project through the duration of its implementation. It is worth noting that
-these milestones were created before the implementation of the solution and
-therefore are subject to change.
-
-% TODO I am talking about a lot of specific things here. Do they know what it
-% means?
-\begin{itemize}
-  \item Setup local ClamAV instance
-  \item Setup local MinIO instance
-  \item Setup local Kafka instance
-  \item Detect PUT message on Kafka
-  \item Read JSON of message to find bucket and object path
-  \item Create AV manager service in GoLang
-  \item Request GET on Object using message data
-  \item Scan Object using Clamd
-  \item Act on result of scan - Add tags, "scanned", "date\_scanned"
-  \item Configuration file using viper
-  \item Add metric collection with Prometheus
-  \item Add structured logging with zap
-  \item Create Database of Audit Logs with postgresql
-  \item Termination of connections to services
-  \item Create tests for each package using mockery
-
-  \item Prepare for Kubernetes deployment with k3d
-  \item Containerise Aegis with Docker
-  \item Automatically configure and start MinIO, Kafka, Clamd, Postgresql,
-        Prometheus and Aegis with Helm
-  \item Port forward MinIO out of the cluster
-  \item Load balancing / performance analysis for Clamd
-  \item Expose Postgresql and Prometheus for analytics
-  \item Prepare configurations for demo, release etc
-  \item Clean-up version control and write readme.me
-\end{itemize}
-
-These milestones can be broken down even further into smaller tasks. These are
-best represented in Gantt / burndown charts which can be found in the appendix.
-% TODO Reference
-
-\section{Background}
-
-% background should be more previous research material etc. Include competition
-% and potential software to use e.g. ClamAV, MinIO. Include the first things you
-% find when googling the same topic as diss.
-
-% Where to put background info on object storage and malware? Not sure
-    %
-
-% Insert background material
-    %
-
-\subsection*{Amazon S3 Malware Detection} % How does amazon do it?
-
-As MinIO's largest competitor, this project draws a lot of inspiration from
-Amazon S3s integrated malware detection blog page \citep{amazon-md}. The blog
-explains Amazons current approach for managing malware detection within their
-service. Amazon S3 uses a combination of ClamAV and Sophos as their third-party
-scanning engines due to their out-of-the-box nature. Amazon then gives you the
-option to use either of these engines or both. The blog goes on to describe the
-three main interaction mechanisms that Amazon S3 uses to flag files for
-scanning. Firstly, an API endpoint would be provided to handle all uploads. This
-forms a queue of uploads which are then scanned before entering the bucket.
-Next, event-driven scanning is used keep track of all regular file uploads. The
-antivirus will then scan each file after they have been written to the bucket.
-Finally, retro-driven scanning is used to scan all existing files within the
-bucket. The user then has the flexibility to define what types of files should
-be scanned including defining time windows. This blog has given some useful
-methodologies of how to keeping track of both incoming and previously scanned
-files. Creating a system that can match these methods is important for offering
-a matching level of scalability and security within MinIO.
-
-% Talk about standard flow and two bucket flow - useful in designing
-
-% Amazon use stub files
-
-\subsection*{} % How does signature detection work?
-
-
-\subsection*{} % Best ways of implementing AV into a micro-service?
-
-
-\subsection*{} % How does ClamAV work? What is clamd
-
-% Malware Artificial Intelligence Object Storage Context
-
-\section{Specification and Design}
-
-\subsection*{Specification}
-
-The specification for this project is to help guide the project to fufill the
-aims set out in the previous section. The specification is broken down into
-three main sections; functional requirements, non-functional requirements and
-constraints.
-
-\subsubsection*{Functional Requirements}
-
-Functional requirements are
-
-
-% TODO Say about we need to keep up so that people are not waiting and the
-% system does not get behind. Maybe use metrics to show how we DO keep up?
-    %
-
-% TODO What to do with infected files TODO What to do with files that are not
-% scanned TODO How to remove infinite loops TODO How to handle large files TODO
-% How many AVs could be used? TODO Security issue of not checking put tagging
-
-\subsubsection*{Non-Functional Requirements}
-
-Non-functional requirements are
-
-\subsubsection*{Constraints}
-\paragraph{}
-
-The constraints are the limitations that the solution must adhere to. The main
-constraint of the project is the strict time limit given to the project. There
-are a total of 12 weeks to achieve a production ready product which will greatly
-limit the scope of the project. This means accurately prioritising the features
-that are most important to the project while also balancing the time spent to
-implement them. The second constraint is the limited resources available to the
-project.
-
-
-Another constraint of the project is that all the external software used must be
-open source / available for commercial use under license or fee. This is to
-ensure that the project is legally viable if the solution was to be used
-commercially.
-
-
-The final constraint is that the solution must
-
-% TODO final constraint
-
-
-\subsection*{Architecture}
+% TODO This is more about personal goals for the project. TODO Do I even need
+% this??
 
     \paragraph{}
-    Given the specification above, various potential architectures can be
-    created and evaluated. An optimal design will then be chosen based on which
-    design fits the specification best.
+    From a personal perspective, by completing this project
+
+
+    \section{Background}
+
+    % background should be more previous research material etc. Include
+    % competition and potential software to use e.g. ClamAV, MinIO. Include the
+    % first things you find when googling the same topic as diss.
+
+    % Where to put background info on object storage and malware? Not sure
+    %
+
+    % Insert background material
+    %
+
+    \subsection*{Amazon S3 Malware Detection} % How does amazon do it?
+    \paragraph{}
+
+    As MinIO's largest competitor, this project draws a lot of inspiration from
+    Amazon S3s integrated malware detection blog page \citep{amazon-md}. The
+    blog explains Amazons current approach for managing malware detection within
+    their service. Amazon S3 uses a combination of ClamAV and Sophos as their
+    third-party scanning engines due to their out-of-the-box nature. Amazon then
+    gives you the option to use either of these engines or both. The blog goes
+    on to describe the three main interaction mechanisms that Amazon S3 uses to
+    flag files for scanning. Firstly, an API endpoint would be provided to
+    handle all uploads. This forms a queue of uploads which are then scanned
+    before entering the bucket. Next, event-driven scanning is used keep track
+    of all regular file uploads. The antivirus will then scan each file after
+    they have been written to the bucket. Finally, retro-driven scanning is used
+    to scan all existing files within the bucket. The user then has the
+    flexibility to define what types of files should be scanned including
+    defining time windows. This blog has given some useful methodologies of how
+    to keeping track of both incoming and previously scanned files. Creating a
+    system that can match these methods is important for offering a matching
+    level of scalability and security within MinIO.
+
+    % Talk about standard flow and two bucket flow - useful in designing
+
+    % Amazon use stub files
+
+    \subsection*{} % How does signature detection work?
+
+
+    \subsection*{} % Best ways of implementing AV into a micro-service?
+
+
+    \subsection*{} % How does ClamAV work? What is clamd
+
+    % Malware Artificial Intelligence Object Storage Context
+
+    \section{Specification and Design}
+
+    \subsection*{Specification}
+
+    The specification for this project is to help guide the project to fulfill
+    the aims set out in the previous section. The specification is broken down
+    into three main sections; functional requirements, non-functional
+    requirements and constraints.
+
+    \subsubsection*{Functional Requirements}
+    \paragraph{}
+
+    Functional requirements are used to define how the solution must work for
+    the project to be considered a success. This project aims to supply an
+    end-to-end solution for detecting malware within the MinIO object storage
+    platform. This goal can be separated into a list of functional requirements:
+
+    \begin{itemize}
+      \item Provide a way of detecting the latest uploads to the object store.
+      \item Record the results of the malware detection within the object store.
+      \item Provision for future expansion and ongoing maintenance.
+      \item Have a high level of customisability to allow for different use
+            cases.
+      \item Allow for efficient and transparent debugging in the event of
+            failure.
+      \item Provide the ability to measure various metrics.
+      \item Scale alongside MinIO to ensure that it does not bottleneck the
+            object store at high loads.
+    \end{itemize}
+
+    % TODO End with a sentence?
+
+    % TODO Say about we need to keep up so that people are not waiting and the
+    % system does not get behind. Maybe use metrics to show how we DO keep up?
+
+
+    \subsubsection*{Non-Functional Requirements}
+    \paragraph{}
+
+    Non-functional requirements are used to define the quality of the solution
+    that is required. This project aims to be production ready and therefore the
+    solution must be held to a high standard. These high standards come in the
+    form of ambitious targets in which the solution will have to satisfy in
+    order to be considered production-ready. The non-functional requirements are
+    split into five categories with metrics to measure their success.
+
+    \begin{itemize}
+      \item Speed - The solution must be able to keep up with the rate of
+            uploads made to MinIO. This can be measured by comparing the time
+            difference between uploading a object to MinIO and the object being
+            scanned and tagged.
+      \item Availability - Over a long period of time the solution must be able
+            to handle all requests. This can be measured by comparing the number
+            of requests made to the number of requests completed over a large
+            time frame.
+      \item Capacity - The solution must be able to handle the maximum number of
+            simultaneous requests that MinIO can handle. This can be measured by
+            monitoring the amount of cache used by the solution under load.
+      \item Reliability - 100\% of the files uploaded to MinIO must go through
+            the scanning process. The recorded metrics can be used to compare
+            MinIO uploads with the number of objects scanned. It is worth noting
+            that checking the clean and infected results add to the total sum of
+            scanned objects
+      \item Usability - Future additions, maintenance and debugging must be as
+            simple as possible. This requirement is more subjective and
+            therefore explanation of how I have achieved this will be discussed
+            in the implementation section.
+    \end{itemize}
+
+    \subsubsection*{Constraints}
+    \paragraph{}
+
+    The constraints are the limitations that the solution must adhere to. The
+    main constraint of the project is the strict time limit given to the
+    project. There are a total of 12 weeks to achieve a production ready product
+    which will greatly limit the scope of the project. This means accurately
+    prioritising the features that are most important to the project while also
+    balancing the time spent to implement them. The second constraint is the
+    limited resources available to the project.
+
+
+    Another constraint of the project is that all the external software used
+    must be open source / available for commercial use under license or fee.
+    This is to ensure that the project is legally viable if the solution was to
+    be used commercially.
+
+    The final constraint is that my own knowledge and experience will increase
+    the average time taken to implement milestones. This is due to the fact that
+    I will need to both include time to learn each new technology and also allot
+    excess time if I incorrectly size a task.
+
+    % TODO Make sure I mitigate this somewhere
+
+    \subsection*{Architecture}
+
+    \paragraph{}
+    Choosing the correct architecture for the project is critical for ensuring
+    that the solution is scalable, performant and maintainable. Given the
+    specification above, various potential architectures can be created and
+    evaluated based my own thoughts and from reading the background material. An
+    optimal design will then be chosen based on which design satisfies the most
+    requirement with as little compromises as possible. Thought will also be
+    given to which architecture fits within the constraints of the project.
 
     % TODO Crop the diagrams to remove the white space
 
@@ -288,11 +286,11 @@ The final constraint is that the solution must
     \subsubsection*{Design 1 - Post-Write}
     \paragraph{}
 
-    This design makes use of the performance benefits of MinIO by allowing puts
-    to be initially written to the bucket without being scanned. The design then
-    uses a event queue compatible with MinIO to keep track of all the files that
-    have been uploaded. The queue is then used to trigger a scan of the file
-    once an antivirus is available. The design is shown in figure
+    The first design makes use of the performance benefits of MinIO by allowing
+    puts to be initially written to the bucket without being scanned. The design
+    then uses a event queue compatible with MinIO to keep track of all the files
+    that have been uploaded. The queue is then used to trigger a scan of the
+    file once an antivirus is available. The design is shown in figure
     \ref{fig:postWriteArch}.
 
     \begin{wrapfigure}{r}{0.45\textwidth}
@@ -503,31 +501,79 @@ The final constraint is that the solution must
     % Flexibility Security Performance Scalability Resource use
     %
 
-    Given the above evaluations of each design, design one best suits the
+    Given the above evaluations of each design, design one best meets the
     requirements and constraints of the project. It makes the most use of the
-    existing features that MinIO provides to handle failure scenarios and to
-    scale out. This also means that this design has less critical responsibility
-    and will better fit the scope constraints allowing for more time to be spent
-    on supplementary features, such as testing, logging, and metric collection.
-    Because of this, the produced solution will be closer to production-ready
-    than the other designs.
+    existing features that MinIO provides in order to handle failure scenarios
+    and to scale out. This also means that this design has less critical
+    responsibility and will better fit the scope constraints allowing for more
+    time to be spent on supplementary features, such as testing, logging, and
+    metric collection. Because of this, the produced solution will be closer to
+    production-ready than the other designs.
 
     This design keeps the user in control by giving them the ability to store
     unscanned files / known malware without wasting resources on a scan.
     Protection can be added per bucket therefore a user could have a known
     malware bucket and a clean bucket within the same object store. This allows
     for the system to be more flexible and to be able to handle more use cases.
-    Designs two and three would not be able to handle this use case as they both
-    scan all objects before they are written to the store.
+    Designs two and three would not be as able to handle this use case as they
+    both scan all objects before they are written to the store.
 
     The size of the cache required is smaller than all other designs as it only
     needs to store the objects actively being scanned. This is in opposition to
     upload queue and write interception designs as they have to be prepared to
     handle the full demand placed on the store. This makes design one the most
     lightweight of all the designs which should lead to a smaller resource
-    footprint
+    footprint.
+
+    % TODO This is a bad ending :(
+    Overall, implementing design one is the best option to create a lightweight
+    yet secure and scalable solution.
 
     \section{Implementation}
+
+
+    % TODO Maybe not here?
+    \subsection*{Milestones} % Breakdown of key targets through project
+
+    There are many key milestones that can be used to measure the progress of
+    the project through the duration of its implementation. It is worth noting
+    that these milestones were created before the implementation of the solution
+    and therefore are subject to change.
+
+    % TODO I am talking about a lot of specific things here. Do they know what
+    % it means?
+    \begin{itemize}
+      \item Setup local ClamAV instance
+      \item Setup local MinIO instance
+      \item Setup local Kafka instance
+      \item Detect PUT message on Kafka
+      \item Read JSON of message to find bucket and object path
+      \item Create AV manager service in GoLang
+      \item Request GET on Object using message data
+      \item Scan Object using Clamd
+      \item Act on result of scan - Add tags, "scanned", "date\_scanned"
+      \item Configuration file using viper
+      \item Add metric collection with Prometheus
+      \item Add structured logging with zap
+      \item Create Database of Audit Logs with postgresql
+      \item Termination of connections to services
+      \item Create tests for each package using mockery
+      \item Prepare for Kubernetes deployment with k3d
+      \item Containerise Aegis with Docker
+      \item Automatically configure and start MinIO, Kafka, Clamd, Postgresql,
+            Prometheus and Aegis with Helm
+      \item Port forward MinIO out of the cluster
+      \item Load balancing / performance analysis for Clamd
+      \item Expose Postgresql and Prometheus for analytics
+      \item Prepare configurations for demo, release etc
+      \item Clean-up version control and write readme.me
+    \end{itemize}
+
+    These milestones can be broken down even further into smaller tasks. These
+    are best represented in Gantt / burndown charts which can be found in the
+    appendix.
+    % TODO Reference
+
     \subsection*{Event Queue}
     % Kafka
 
@@ -584,150 +630,3 @@ The final constraint is that the solution must
 
   % \csvautolongtable{assets/vibProj.csv}
   %
-
-  % I DONT THINK THIS IS WHAT THEY MEANT BY BACKGROUND
-  % \subsection*{Malware}
-    %
-  % Malware is a type of software designed to harm or exploit computer systems,
-  % networks, and users. It includes a wide range of harmful programs, such as
-  % viruses, worms, Trojans, ransom-ware, spyware, and adware. Malware can be
-  % used to steal sensitive information, gain unauthorized access to systems,
-  % damage or destroy data, and perform other malicious activities. Malware can
-  % be distributed through various channels, such as email attachments,
-  % malicious web-sites, software downloads, and infected removable media. It is
-  % a serious threat to computer security and can cause significant damage to
-  % storage devices if left untreated.
-  % % TODO And has the potential to be laying dormant inside peoples computers
-%
-    %
-  % Malicious files can be particularly risky for storage devices in cloud
-  % environments due to their shared nature. In a cloud storage environment,
-  % multiple users and applications can access and store data on the same
-  % physical storage infrastructure. This means that an infected file can
-  % quickly spread and infect other files and users, compromising the security
-  % and integrity of the entire system. Moreover, cloud storage providers may
-  % not be able to isolate and contain malware as easily as with traditional
-  % storage systems. As a result, cloud storage users need to be extra vigilant
-  % and take proactive measures, such as implementing antivirus software,
-  % regular backups, and secure access controls, to mitigate the risks of
-  % malware infections.
-%
-  % \subsection*{Anti-Virus}
-  % % Create a connection between paragraphs here. Include Citation
-    %
-  % In the context of modern IT solutions, ensuring robust security measures is
-  % crucial to guarantee reliable operations and safeguard data against threats.
-  % Companies can face severe penalties, up to ???, for failing to comply with
-  % data protection regulations in the event of a breach. Therefore, it is
-  % imperative that IT products offer comprehensive security features, mainly
-  % including built-in antivirus capabilities, to protect against malicious
-  % attacks and prevent data loss.
-%
-    %
-  % Modern Anti-Viruses mostly work using a combination of signature-based and
-  % heuristic detection methods. Signature-based detection works by comparing
-  % the file being scanned against a database of known malicious file
-  % signatures. If a match is found, the file is flagged as malicious. This
-  % method is effective at detecting known malware, but it is not effective at
-  % detecting new or unknown malware. Heuristic detection, on the other hand,
-  % works by analyzing the behavior of the file being scanned and comparing it
-  % against a database of known malicious behaviors. This method is more
-  % effective as it looks at practices used by malware, such as common imports,
-  % and therefore has potential to detect previously unknown malware.
-%
-  % % EXPLAIN HOW MACHINE LEARNING CAN BE USED?? Tie it into next paragraphs
-%
-  % \subsection*{Artificial Intelligence}
-  % % What is AI? Why use AI? Is it better than regular detection? How does this
-  % % affect our definition of malware and antivirus?
-%
-    %
-  % % SUBSEQUENTLY EXPLAIN WHAT AI IS?
-%
-  % \subsection*{Object Storage}
-    %
-  % Object storage is a type of data storage architecture that manages data as
-  % discrete units known as objects. Each object contains data, metadata
-  % (information about the object), and a unique identifier that enables it to
-  % be located and retrieved. Object storage systems are designed to handle
-  % large amounts of unstructured data, such as files, images, videos, and other
-  % multimedia content and have become increasingly popular in recent years with
-  % a compound annual growth rate of 13.6\% \citep{object-storage-market}.
-%
-    %
-  % Unlike traditional storage architectures like file or block storage, object
-  % storage does not organize data in a hierarchical directory structure or use
-  % fixed-sized blocks. Instead, it allows data to be stored and accessed
-  % independently of the underlying physical storage infrastructure. This makes
-  % it easier to scale storage capacity and performance, as well as to implement
-  % features like data replication, versioning, and encryption. Object storage
-  % is often used in cloud computing environments, where it is a popular option
-  % for storing and managing data in distributed systems.
-%
-%
-  % \subsection*{MinIO}
-    %
-  % MinIO is a high-performance, open-source, distributed object storage system
-  % that is designed to be an alternative to Amazon S3. It is S3 compatiable
-  % allowing for almost instantanous migration from Amazon to MinIO. MinIO is
-  % also designed to scale horizontally and can be deployed on a wide variety of
-  % hardware and software platforms \citep{minio}. It is written in Go and is
-  % available under the Apache License 2.0 \citep{minio-repo}. MinIO has several
-  % features that make it an attractive choice for cloud-native applications. It
-  % is fault-tolerant, with data being automatically distributed across multiple
-  % drives and servers (erasure) to ensure high availability. Additionally,
-  % MinIO is highly performant, with a focus on optimizing for SSDs and NVMe
-  % drives \citep{minio}.
-%
-    %
-  % Currently, MinIO does not provide built-in antivirus capabilities. This
-  % means that users must rely on third-party antivirus software to protect
-  % their data from malware. However, this can be a challenge for users who want
-  % to use MinIO in cloud environments, as antivirus software is often
-  % incompatible with cloud-native applications. This is because antivirus
-  % software is designed to run on a single machine and is not designed to scale
-  % horizontally. As a result, antivirus software is not well-suited for
-  % cloud-native applications, which are often deployed in distributed
-  % environments. Moreover, antivirus software is often resource-intensive and
-  % can slow down the performance of cloud-native applications if scalability is
-  % not properly considered. This is particularly problematic for cloud-native
-  % applications that require high performance, such as video streaming and
-  % machine learning.
-%
-    %
-  % Adding an in-built antivirus capabilities to MinIO would allow users to
-  % protect their data from malware without having to rely on third-party tools.
-  % This would also allow users to run antivirus software in a cloud-native with
-  % scalability and performance in mind. In this report we will discuss
-  % different approaches that can be taken to embed an antivirus engine into
-  % MinIO and evaluate their performance and scalability.
-%
-  % \subsection*{ClamAV}
-  % % Describe inner workings!?!?! Open-source
-%
-    %
-  % Open-source antivirus software is a popular choice for cloud-native and
-  % distributed applications. This is because open-source software is often
-  % free, which makes it a cost-effective option for users. Additionally,
-  % open-source software is often more customizable and flexible than
-  % proprietary software, which makes it easier to integrate into cloud-native
-  % applications. Open-source software is also often more secure than
-  % proprietary software, as it is often reviewed by a large community of
-  % developers and users.
-%
-    %
-  % % TODOCHECK does it focus on distribution??
-  % One of the most popular open-source antivirus software is ClamAV. It is
-  % written in C and is available under the GNU General Public License
-  % \citep{clamav-repo}. ClamAV is designed to be lightweight and fast, with a
-  % focus on distributed and scalable scanning. ClamAV uses a combination of
-  % signature-based and heuristic detection methods as mentioned earlier with a
-  % reported accuracy of ???. It uses an open-source database of known malicious
-  % files and behaviors which is updated regularly by the ClamAV community.
-%
-    %
-  % % TODOCHECK is this what we do in the end?? Can we use AI to make it better?
-  % % How?
-  % For prototype implementation and benchmarking of the system architecture, we
-  % will use ClamAV as our antivirus engine. This can then be replaced or
-  % upgraded with a more advanced antivirus engine that utilises AI.
