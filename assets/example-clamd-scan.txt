@@ -1,0 +1,7 @@
+/Users/username/test.jpg: OK
+
+----------- SCAN SUMMARY -----------
+Infected files: 0
+Time: 0.332 sec (0 m 0 s)
+Start Date: 2023:03:27 11:53:15
+End Date:   2023:03:27 11:53:16
