@@ -1,0 +1,36 @@
+aegis/
+├── cmd/
+│   └── aegis/
+│       └── main.go
+├── pkg/
+│   ├── clamav/
+│   │   └── clamav.go
+│   ├── config/
+│   │   └── config.go
+│   ├── kafka/
+│   │   └── kafka.go
+│   ├── logger/
+│   │   └── logger.go
+│   ├── minio/
+│   │   └── minio.go
+│   ├── postgresql/
+│   │   └── postgresql.go
+│   └── prometheus/
+│       └── prometheus.go
+├── internal/
+│   ├── auditlog/
+│   │   └── auditlog.go
+│   ├── dispatcher/
+│   │   └── dispatcher.go
+│   ├── events/
+│   │   └── events.go
+│   ├── object/
+│   │   └── object.go
+│   ├── objectstore/
+│   │   └── objectstore.go
+│   └── scanner/
+│       └── scanner.go
+├── vendor/ <- Go dependencies 
+├── build/ <- Go binaries
+├── examples/ <- Example malware 
+└── cache/ <- Object Cache

@@ -1,0 +1,13 @@
+INSERT INTO %s (ObjectKey, 
+		BucketName, 
+		Result, 
+		Antivirus, 
+		Timestamp, 
+		VirusType) VALUES ($1, 
+		  		   $2, 
+		  		   $3, 
+				   $4, 
+			  	   $5, 
+		  		   $6
+)
+// Where %s = tableName

@@ -1,0 +1,37 @@
+aegis
+  cmd/
+      aegis/
+        main.go
+  pkg/
+    clamav/
+      clamav.go
+    config/
+      config.go
+    kafka/
+      kafka.go
+    logger/
+      logger.go
+    minio/
+      minio.go
+    postgresql/
+      postgresql.go
+    prometheus/
+      prometheus.go
+  internal/
+    auditlog/
+      auditlog.go
+    dispatcher/
+      dispatcher.go
+    events/
+      events.go
+    object/
+      object.go
+    objectstore/
+      objectstore.go
+    scanner/
+      scanner.go
+  vendor/ <- Go dependencies are downloaded to here
+  build/ <- Go binaries are geneerates here
+  examples/ <- Contains example malware to test AV
+  cache/ <- Where objects are downloaded to
+  local-configs/ <- Contains the dependency service configs
