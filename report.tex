@@ -7,10 +7,11 @@
 \usepackage{color}
 % Code listings
 \usepackage{listings} \lstset{ basicstyle=\small, showstringspaces=false,
-  % commentstyle=\itshape\small\color{gray},
-  % keywordstyle=\color{cyan}\bfseries, numberstyle=\color{gray}, numbers=left,
-  % numbersep=8pt
+  % commentstyle=\itshape\small\color{gray}, keywordstyle=\color{cyan}\bfseries,
+  % numberstyle=\color{gray}, numbers=left, numbersep=8pt
 }
+% Paragraph spacing - very good!
+\usepackage{parskip}
 % Bibliography
 \usepackage{natbib}
 % Figure positions
@@ -137,8 +138,16 @@ being mindful to not impact the scalability or performance of the platform.
 % TODO Project Aims: This is more about personal goals for the project.
 
 \paragraph{}
-From a personal perspective, by completing this project
+The primary objective of this project is to integrate malware detection into
+MinIO without compromising the platform's scalability or performance. Specific
+targets are elaborated in the specification section.
 
+From a personal standpoint, this project serves as an opportunity to enhance my
+knowledge of the Go programming language and the MinIO platform. Additionally,
+it aims to expand my experience in designing and implementing production-ready
+solutions within a micro-service environment. Lastly, this project seeks to
+develop my proficiency in managing time, scope, and resources for large-scale
+projects.
 
 \section{Background}
 
@@ -177,41 +186,109 @@ a matching level of scalability and security within MinIO.
 
 % Amazon use stub files
 
-\subsection*{} % How does signature detection work?
+% \subsection*{} % How does signature detection work?
 
 
-\subsection*{} % Best ways of implementing AV into a micro-service?
+% \subsection*{} % Best ways of implementing AV into a micro-service?
 
 
-\subsection*{} % How does ClamAV work? What is clamd
+% \subsection*{} % How does ClamAV work? What is clamd
 
 % Malware Artificial Intelligence Object Storage Context
 
 \section{Specification}
 
-The specification for this project is to help guide the project to fulfill the
-aims set out in the previous section. The specification is broken down into
-three main sections; functional requirements, non-functional requirements and
-constraints.
+The purpose of the project specification is to guide the project towards
+achieving the goals outlined in the previous section. The specification is
+divided into three main categories: functional requirements, non-functional
+requirements, and constraints.
+
+The MoSCoW method is employed to prioritize the projects requirements. It is a
+prioritization technique utilized in business analysis and software development
+to establish a shared understanding among stakeholders regarding the
+significance assigned to the delivery of each requirement
+\citep{moscow-prioritization}. The acronym stands for:
+
+\begin{itemize}
+  \item Must have: Critical for the project's success and must be included in
+        the final solution.
+  \item Should have: Important but not absolutely necessary for the project's
+        success. They should be included if possible, but the project can
+        proceed without them.
+  \item Could have: Desirable but not essential. They can be included if time
+        and resources permit but can be left out without impacting the project's
+        success.
+  \item Won't have: Not necessary for the current project and will not be
+        included. They may be considered for future development.
+\end{itemize}
 
 \subsection*{Functional Requirements}
 \paragraph{}
 
-Functional requirements are used to define how the solution must work for the
-project to be considered a success. This project aims to supply an end-to-end
-solution for detecting malware within the MinIO object storage platform. This
-goal can be separated into a list of functional requirements:
+Functional requirements are provided in the table \ref{tab:functional-reqs}. The
+requirement is given with a MoSCoW priority and a description to justify the
+priority.
 
-\begin{itemize}
-  \item Provide a way of detecting the latest uploads to the object store.
-  \item Record the results of the malware detection within the object store.
-  \item Provision for future expansion and ongoing maintenance.
-  \item Have a high level of customisability to allow for different use cases.
-  \item Allow for efficient and transparent debugging in the event of failure.
-  \item Provide the ability to measure various metrics.
-  \item Scale alongside MinIO to ensure that it does not bottleneck the object
-        store at high loads.
-\end{itemize}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|l|} \hline
+    \textbf{Requirement} & \textbf{Description} & \textbf{Priority} \\ \hline
+Provide a way of detecting the latest uploads to the object store & Key part of
+automating scans & Must \\ \hline Record the results of the malware detection
+within the object store & Some feedback from the scan must be provided to the
+user. & Must \\ \hline Provide the ability to measure various metrics & Metric
+collection is very attractive for satisfying production-ready status. & Must \\
+\hline Scale alongside MinIO to ensure that it does not bottleneck the object
+store at high loads & To handle maximum throughput, the solution should scale
+alongside MinIO to ensure it is production-ready. & Must \\ \hline Provision for
+future expansion and ongoing maintenance & Having the ability to build on-top of
+the project will increase the attractiveness to users looking to migrate from
+                                           AWS & Must \\ \hline
+    \hline
+
+    Have a high level of customisability to allow for different use cases &
+Gives flexibility to the user but is not a requirement for proof of concept &
+Should \\ \hline Allow for efficient and transparent debugging in the event of
+    failure & Creating a robust product mitigates the priority of debugging. & Should \\ \hline
+
+Add more complex metrics - Histogram, Gauges, etc & Additional metrics are more
+                                                    beneficial in a production
+                                                    environment but unnecessary
+                                                    for size of project scope. & Should \\ \hline
+    \hline
+    Provide the choice of multiple antivirus engines & not necessary for the
+proof of concept as it requires too much time. & Could \\ \hline
+    Provide a warning when under ``delete'' cleanup policy & not necessary for the
+proof-of-concept as it requires too much time. & Could \\ \hline
+    Automatically event queue to bucket notifications & Can be completed
+                                                        manually with
+                                                        instructions instead.
+                                                        Removes customisability
+                                                        from the user if done automatically. & Could \\ \hline
+     Supply the MinIO policies the solution will use e.g. ``put'' and ``get''. &
+                                                                                 MinIO
+                                                                                 denies
+                                                by default and therefore
+                                                                                 operations
+                                                                                 could
+                                                fail when MinIO is not run with
+                                                                                 admin
+                                                                                 permissions.
+                                                & Could \\ \hline
+    \hline
+
+    Prevent the downloading of files if flagged as infected & Is covered by
+cleanup policies. Would also require GUI changes. & Wont \\ \hline Protection
+from ``inside man'' attacks & The system will be maintained by an admin. The
+admin could attempt to compromise the system. Protection against this is
+significantly harder without reducing extensibility. & Wont \\ \hline Provide
+multiple types of scanners e.g. hash or server based AV scanner & These would
+have different workloads and requirements. Not achievable in project scope. &
+                                                                              Wont \\ \hline
+  \end{tabular}
+  \caption{Functional Requirements}
+  \label{tab:functional-reqs}
+\end{table}
 
 % TODO Functional Requirements: End with a sentence?
 
@@ -219,42 +296,30 @@ goal can be separated into a list of functional requirements:
 % not waiting and the system does not get behind. Maybe use metrics to show how
 % we DO keep up?
 
-
 \subsection*{Non-Functional Requirements}
 \paragraph{}
 
-Non-functional requirements are used to define the quality of the solution that
-is required. This project aims to be production ready and therefore the solution
-must be held to a high standard. These high standards come in the form of
-ambitious targets in which the solution will have to satisfy in order to be
-considered production-ready. The non-functional requirements are split into five
-categories with metrics to measure their success.
-
-\begin{itemize}
-  \item Speed - The solution must be able to keep up with the rate of uploads
-        made to MinIO. This can be measured by comparing the time difference
-        between uploading a object to MinIO and the object being scanned and
-        tagged.
-  \item Availability - Over a long period of time the solution must be able to
-        handle all requests. This can be measured by comparing the number of
-        requests made to the number of requests completed over a large time
-        frame.
-  \item Capacity - The solution must be able to handle the maximum number of
-        simultaneous requests that MinIO can handle. This can be measured by
-        monitoring the amount of cache used by the solution under load.
-  \item Reliability - 100\% of the files uploaded to MinIO must go through the
-        scanning process. The recorded metrics can be used to compare MinIO
-        uploads with the number of objects scanned. It is worth noting that
-        checking the clean and infected results add to the total sum of scanned
-        objects
-  \item Usability - Future additions, maintenance and debugging must be as
-        simple as possible. This requirement is more subjective and therefore
-        explanation of how I have achieved this will be discussed in the
-        implementation section.
-\end{itemize}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|p{0.7\textwidth}|l|}
+    \hline
+    \textbf{Requirement} & \textbf{Description} & \textbf{Priority} \\ \hline
+    Speed & The solution must be able to keep up with the rate of uploads made to MinIO. This can be measured by comparing the time difference between uploading an object to MinIO and the object being scanned and tagged & Must \\ \hline
+    Availability & Over a long period of time, the solution must be able to handle all requests. This can be measured by comparing the number of requests made to the number of requests completed over a large time frame & Must \\ \hline
+    Capacity & The solution must be able to handle the maximum number of simultaneous requests that MinIO can handle. This can be measured by monitoring the amount of cache used by the solution under load & Should \\ \hline
+    Reliability & 100\% of the files uploaded to MinIO must go through the scanning process. The recorded metrics can be used to compare MinIO uploads with the number of objects scanned. It is worth noting that checking the clean and infected results add to the total sum of scanned objects & High \\ \hline
+    Usability & Future additions, maintenance, and debugging must be as simple as possible. This requirement is more subjective and therefore an explanation of how this has been achieved will be discussed in the implementation section & Should \\ \hline
+    Security & Ensure the solution follows best practices for security, including data protection and secure communication between components & Must \\ \hline
+    Privacy & The solution must respect user privacy by adhering to privacy laws and regulations, as well as minimizing data collection and ensuring data is stored securely & Must \\ \hline
+  \end{tabular}
+  \caption{Non-Functional Requirements}
+  \label{tab:non_functional_requirements}
+\end{table}
 
 \subsection*{Constraints}
 \paragraph{}
+
+% TODO Constraints: Include heatmap?
 
 The constraints are the limitations that the solution must adhere to. The main
 constraint of the project is the strict time limit given to the project. There
@@ -264,18 +329,18 @@ that are most important to the project while also balancing the time spent to
 implement them. The second constraint is the limited resources available to the
 project.
 
-
 Another constraint of the project is that all the external software used must be
 open source / available for commercial use under license or fee. This is to
 ensure that the project is legally viable if the solution was to be used
 commercially.
 
 The final constraint is that my own knowledge and experience will increase the
-average time taken to implement milestones. This is due to the fact that I will
-need to both include time to learn each new technology and also allot excess
-time if I incorrectly size a task.
+average time taken to implement milestones. This is due to the fact that extra
+time must be provided to learn any new technology. Any errors made will also
+cause unexpected delays to the project therefore ease of use, documentation and
+community support will be taken into account when choosing technologies.
 
-% TODO Constraints: Make sure I mitigate this somewhere
+% TODO Constraints: Make sure I mitigate these somewhere
 
 \section{Architecture}
 
@@ -288,9 +353,15 @@ will then be chosen based on which candidate design satisfies the most
 requirement with as little compromises as possible. Thought will also be given
 to which architecture fits within the constraints of the project.
 
-% TODO Architecture: Crop the diagrams to remove the white space
+\subsubsection*{Project Naming}
+\paragraph{}
+Due to the defined functionality of the solution, an suitable name can be
+chosen. ``Aegis'' is the name of the shield that Zeus used to protect himself in
+Greek mythology and is also a noun synonymous with protection. This is
+appropriate given that the solution is designed to protect the MinIO object
+store from malware. Aegis will be used synonymously with the solution throughout
+the rest of the report.
 
-% Post-Write
 \subsection*{Candidate Design 1 - Post-Write}
 \paragraph{}
 
@@ -320,8 +391,6 @@ for keeping the project within the time constraints.
 Secondly, the design also makes use of the integrated event queue provided by
 MinIO. This again removes responsibility from the solution by differing the
 scalability and reliability requirements of an event queue to MinIO.
-
-% TODO Candidate Design 1: DO THEY KNOW WHAT AEGIS IS?
 
 Lastly, having Aegis dispatch the files to a scalable number of antivirus
 scanners allows the solution to scale to meet the demands of the system. This
@@ -496,7 +565,6 @@ on their node and therefore will not be able to reconstruct the whole file for
 scanning. This makes this candidate design unsuitable for MinIO as it erasure
 coding is one of its key features.
 
-
 \subsection*{Selected Candidate Design}
 
 Given the above evaluations of each candidate design, design one best meets the
@@ -529,37 +597,42 @@ lightweight yet secure and scalable solution.
 
 \section{Implementation}
 
-% TODO Implementation: What does the final product look like?
+\subsection*{Service Selection and Creation}
 
-\subsection*{Service Selection and Creation} % How I tested each service
+% TODO Implementation: Why did separate services need to be started?
 
-% TODO Implementation: Why did I choose to start all the services separately?
+Throughout the implementation, the development of the solution followed a
+waterfall approach. The project's progress was determined by milestones outlined
+in the project plan Gantt chart, which can be found in the appendix at figure
+\ref{fig:gantt}. As this is a solo project with a limited timeline, the
+waterfall methodology is a better fit than an agile methodology as agile caters
+more to larger team with longer timelines where the requirements are less concrete.
 
-Before I started to code the solution, I needed to research, create, configure
-and most importantly understand each external service that I would be using. Up
-to this point I know what types of services I would need to create, but I did
-not know what specific services I would be using. This section will go through
-the process of how I chose each service and then initially configured them to
+Before beginning to implement the solution, it was necessary to
+research, create, configure, and understand each external service that would be
+used. Up to this point, the types of services needed were identified, but the
+specific services to be used had not been determined. This section will describe
+the process of selecting each service and then initially configuring them to
 form a bare-bones proof of concept.
 
 \subsubsection*{Object Store - MinIO}
 \paragraph{}
 
-The object store is the only service that I did not need to research or compare
-as it is already the subject of this project. However; I did need to create and
-configure a local instance of MinIO for development. MinIO itself is available
-from many sources, including Docker, Homebrew, and the MinIO website. I chose to
-use Homebrew, a MacOS package manager, as it is the easiest to install and
-update. I then used the MinIO documentation to create a local instance of MinIO
-where I can access the web client on \url{http://localhost:9000}. From this I
-could create buckets, upload objects to the store and get more familiar with
-MinIO's features.
+The object store is the only service that did not require further research or
+comparison as it is already the subject of this project. However, creating and
+configuring a local instance of MinIO for development was necessary. MinIO
+itself is available from various sources, including Docker, Homebrew, and the
+MinIO website. Homebrew, a MacOS package manager, was chosen as it is the
+easiest to install and update. The MinIO documentation was then used to create a
+local instance of MinIO accessible through the web client
+at \url{http://localhost:9000}. This allowed for the creation of buckets,
+uploading objects to the store, and familiarization with MinIO's features.
 
 % TODO Object Store: Include images
 
 MinIO has integrated the ability to send notifications to event queues depending
-on what operation is performed on the store. This makes it quick and easy to set
-up a locally running instance of an event queue to read messages sent by MinIO.
+on the operation performed on the store. This makes it quick and easy to set up
+a locally running instance of an event queue to read messages sent by MinIO.
 MinIO offers wide support for many different event queues, such as Kafka,
 Webhook, Redis, PostgreSQL, and many more.
 
@@ -568,61 +641,63 @@ Webhook, Redis, PostgreSQL, and many more.
 
 Kafka is a popular and well-supported event queue that is used in many different
 industries. It offers many features that make it a good choice for this project,
-such as high-throughput, low latency and open-source. Kafka is also available
-from both Docker and Homebrew make it easy to install and run locally. Most
+such as high-throughput, low latency, and open-source. Kafka is also available
+from both Docker and Homebrew, making it easy to install and run locally. Most
 modern event queues offer similar high throughput and low latency, but Kafka is
 lighter in resource usage than other queues, such as RabbitMQ
 \citep{kafka-rabbitmq}. This is beneficial as it will be easier to implement and
-not over use resources when it has a simple use case.
+not overuse resources when it has a simple use case.
 
 Kafka has a dependency on Zookeeper, which is a distributed coordination
 service. Zookeeper must be installed as a separate service but is available from
-the same sources as Kafka. Kafka can be run in Kafka Raft mode (KRaft) which
+the same sources as Kafka. Kafka can be run in Kafka Raft mode (KRaft), which
 will eventually replace Zookeeper, but as of writing KRaft has not been fully
 adopted yet \citep{kafka-raft}.
 
-With Kafka and Zookeeper setup, I use Kafka's command line interface (CLI) to
-start the service and create a topic. I then use the MinIO documentation to
-configure MinIO to send all put notifications to the Kafka topic. I can then use
-the Kafka CLI to read messages from the topic and see the messages sent by
-MinIO. This proves that the event queue is working and that MinIO is sending
-messages to it whenever I perform a put operation. An example Kafka message is
-available in the appendix in listing \ref{kafka-notif}.
+With Kafka and Zookeeper set up, the Kafka command line interface (CLI) was used
+to start the service and create a topic. The MinIO documentation was then used
+to configure MinIO to send all put notifications to the Kafka topic. The Kafka
+CLI was used to read messages from the topic and see the messages sent by MinIO.
+This demonstrated that the event queue is working and that MinIO is sending
+messages to it whenever a put operation is performed. An example Kafka message
+is available in the appendix in listing \ref{appendix:kafka-notif}.
 
 % TODO Event Queue: Reference TODO Object Store: Include images?
+
+My apologies for that, here is the complete version:
 
 \subsubsection*{Antivirus}
 \paragraph{}
 
-The antivirus we choose has to meet a list of requirements for it to be suitable
-for use in this project. Firstly, it must be able to be scaled with the solution
-in order to keep up with the demand placed on the system. Secondly, it must have
-a CLI that our program can interact with in order to scan files. Finally, it
-must be free or as cheap as possible to make it viable for commercial use. This
+The antivirus chosen needed to meet a list of requirements for it to be suitable
+for use in this project. Firstly, it must be able to scale with the solution in
+order to keep up with the demand placed on the system. Secondly, it must have a
+CLI that the program can interact with in order to scan files. Finally, it must
+be free or as inexpensive as possible to make it viable for commercial use. This
 narrows down the available options to a few contenders.
 
 Sophos is a popular antivirus that is used by many businesses and is available
-for free for personal use, however; is it paid % TODO Antivirus: Sophos
+for free for personal use. However, it is paid for commercial use, which makes
+it less suitable for this project.
 
-ClamAV however is completely free and open-source. It comes with a scalable and
-multi-threaded daemon which can be accessed via CLI for high-performance and
-on-demand file scanning. \citep{clamav}. It is capable of scanning many
-different file types, including archives and mail files. Build-in is freshclam,
-a tool for automatically updating the virus database definitions. The virus
-database itself is also open-source and is updated regularly by the open source
-community. ClamAV has a docker image and is available from Homebrew.
+ClamAV, on the other hand, is completely free and open-source. It comes with a
+scalable and multi-threaded daemon that can be accessed via CLI for
+high-performance and on-demand file scanning \citep{clamav}. It is capable of
+scanning many different file types, including archives and mail files. Built-in
+is freshclam, a tool for automatically updating the virus database definitions.
+The virus database itself is also open-source and is updated regularly by the
+open source community. ClamAV has a docker image and is available from Homebrew.
 
-I have chosen to use ClamAV as it is totally free for commercial use,
-open-source and has a CLI that can be used to scan files. It is also very well
-documented and has a large community of users. Sophos
-% TODO Antivirus: Sophos too expensive
+ClamAV was chosen for this project because it is entirely free for commercial
+use, open-source, and has a CLI that can be used to scan files. It is also very
+well documented and has a large community of users.
 
 ClamAV comes with a daemon, clamd, that can be run in the background and can be
 accessed via a CLI using clamdscan, the clamd client. A configuration file is
 needed to point clamdscan to the IP address that the daemon is running. In this
-case it is running locally on port 3310. Performing the clamdscan command and
+case, it is running locally on port 3310. Performing the clamdscan command and
 providing a file will scan the file and return the result. An example of this is
-available in the appendix in listing \ref{clamd-scan}.
+available in the appendix in listing \ref{appendix:clamd-scan}.
 
 % TODO Object Store: Include images?
 
@@ -632,52 +707,51 @@ available in the appendix in listing \ref{clamd-scan}.
 As the project is expected to be as production-ready as possible, a system for
 collecting metrics is needed. This will allow the system to monitor its activity
 for easier maintenance and debugging. A few different options are available for
-metric collection, such as Prometheus, InfluxDB, and Graphite. Each of these
+metric collection, such as Prometheus, InfluxDB, and Graphite.
 
 % TODO Metric Collection: Reference why we need metrics
 
 % TODO Metric Collection: Complete comparison
 
-From this comparison, I chose to use Prometheus as it is open-source, uses a
-pull model with the option for a push gateway and it does not require a
-distributed system to run, unlike InfluxDB. Prometheus is available from both
-Docker and Homebrew.
+From this comparison, Prometheus was chosen as it is open-source, uses a pull
+model with the option for a push gateway, and it does not require a distributed
+system to run, unlike InfluxDB. Prometheus is available from both Docker and
+Homebrew.
 
-Prometheus is currently unusable as I am not sending it any metrics to collect.
-I can still launch the Prometheus server and access the web interface on port
-9090. In the meantime I can use the Prometheus documentation to create a
-configuration file defining the port and endpoint I expect to be exposing
-metrics to, in this case port 2112 and /metrics.
+Prometheus is currently unusable as it is not being sent any metrics to collect.
+However, the Prometheus server can still be launched, and the web interface can
+be accessed on port 9090. In the meantime, the Prometheus documentation can be
+used to create a configuration file defining the port and endpoint expected to
+be exposing metrics to, in this case, port 2112 and /metrics.
 
-% TODO Metric Collection: Shall I reference Prometheus docs?
-s
+% TODO Metric Collection: Reference Prometheus docs?
+
 % TODO Object Store: Include images?
 
 \subsubsection*{Audit Log Store}
 \paragraph{}
 
-Production-ready software should have a way to store logs for auditing and
-analysis purposes. This is a relatively simple requirement as a central database
-can be used due to the expected low amount of data needing to be written. The
-purpose of the audit log is to store information about the scans performed by
-the system with information such as, time and result of the scan as well as the
-antivirus used. This gives the system a way to look back at previous scans which
-could help with debugging and maintenance.
+Production-ready software should have a method to store logs for auditing and
+analysis purposes. A central database can be used due to the expected low amount
+of data needing to be written. The audit log's purpose is to store information
+about the scans performed by the system, such as the time and result of the
+scan, as well as the antivirus used. This allows the system to review previous
+scans, which can aid in debugging and maintenance.
 
-There are many different options for a database to store the audit logs, such as
-PostgreSQL, MySQL, MongoDB, and many more. PostgreSQL remains the most versatile
-out of these options as it is a relational database and can be used for many
-different purposes. As the use case is simple, keeping to a single database
-service is the best option for maintainability and usability. PostgreSQL is also
-available from both Docker and Homebrew.
+Various options exist for a database to store the audit logs, including
+PostgreSQL, MySQL, MongoDB, and many more. PostgreSQL is considered the most
+versatile of these options, as it is a relational database and can be used for
+many different purposes. Since the use case is simple, maintaining a single
+database service is the best option for maintainability and usability.
+PostgreSQL is also available from both Docker and Homebrew.
 
 % TODO Audit Log Store: Compare some more databases?
 
-Like Prometheus, PostgreSQL is currently unusable as I am not sending it any
-data to store. However, I can still launch the PostgreSQL server and access the
-database via PostgreSQL shell prompt (psql). I can create a database and a user
-for the database to use. This database can then be exposed to port 5432 on the
-localhost ready for Aegis to use.
+At this stage, PostgreSQL is not yet storing any data. However, the PostgreSQL
+server can be launched, and the database accessed via the PostgreSQL shell
+prompt (psql). A database and a user for the database can be created. The
+database can then be exposed to port 5432 on the localhost, making it ready for
+Aegis to use.
 
 % TODO Audit Log Store: Reference why we need metrics TODO Object Store: Include
 % images?
@@ -699,12 +773,11 @@ Docker
 % TODO Object Store: Include images?
 
 
-\subsection*{Aegis Design and Creation}
+\subsection*{Aegis Module Design and Creation}
 \paragraph{}
 
 Now all of the dependencies have been downloaded, initialised and configured,
-Aegis can now be coded to interact with them.
-
+the Aegis Go module can be created. A module is a collection of packages
 
 The most common language to use for micro-service based projects is GoLang. Go
 is a compiled language that is statically typed and high concurrency support.
@@ -712,6 +785,42 @@ This makes it a perfect fit for this project to ensure that the system is as
 performant as possible. MinIO is also written in Go should allow for easier
 integration. Go has certain standards and guidelines for clean architecture that
 should be followed to ensure high usability and efficiency.
+
+Go introduces some specific language that are commonly used during the project.
+A list of common terms and their definitions are available in table
+\ref{table:go-terms}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|p{0.7\textwidth}|}
+    \hline
+    \textbf{Go Specific Term} & \textbf{Definition} \\
+    \hline
+    Go keyword & Launches a function as a goroutine, which is a lightweight thread managed by the Go runtime, enabling concurrent execution. \\
+    \hline
+    Select    & Waits on multiple communication operations, typically used with channels, to handle different cases depending on which operation is ready. \\
+    \hline
+    Switch    & Multi-way branching statement that allows conditional execution of code blocks based on the evaluation of an expression or comparisons. \\
+    \hline
+    Goroutine & Lightweight thread managed by Go runtime, allowing concurrent execution of functions without the overhead of managing traditional threads. \\
+    \hline
+    Channel   & Communication mechanism between goroutines, allowing them to synchronize and share data, providing a way to safely pass data between them. \\
+    \hline
+    Struct    & Composite data type for creating custom structures composed of different fields, useful for grouping related data together. \\
+    \hline
+    Package   & Collection of related Go source files organized under a specific namespace, allowing code organization, reuse, and dependency management. \\
+    \hline
+    Module    & Collection of related Go packages, providing versioning and dependency management, simplifying the process of building and sharing Go code. \\
+    \hline
+    Capitalised first letters & All functions, variables and types that are
+                                intended to be exported outside of a package must be capitalised. \\
+    \hline
+    Defer & Defers the execution of a function until the surrounding function returns. \\
+    \hline
+  \end{tabular}
+  \caption{Go Specific Terms and Their Definitions}
+  \label{table:go-terms}
+\end{table}
 
 \subsubsection*{Project Structure}
 \paragraph{}
@@ -742,20 +851,24 @@ actions as follows:
 \end{itemize}
 
 From these requirements, the internal design of Aegis can be planned. We can
-visualise this plan using a class diagram. It is worth noting that Go itself
-does not have classed but instead uses structs which can be used to achieve the
-same effect. This plan is shown in figure \ref{fig:aegisPlan}.
+visualise this plan using various UML diagrams such as, class, sequence and flow
+diagrams. Class diagrams are useful for understanding the relationships between
+different classes - in this case packages - and what attributes and methods they
+require \citep{class-diagrams}. It is worth noting that Go itself does not have
+classes but instead uses structs which can be used to achieve the same effect.
+Sequence diagrams are also valuable for understanding the timeline of the system
+during the execution of a workflow \citep{uml-diagrams}. Flow diagrams are
+useful for visualising the flow of processes and decisions during a workflow.
+This class diagram is shown in the appendix at figure
+\ref{appendix:class-diagram} along side with a both the sequence and flow
+diagram at figures \ref{appendix:general-sequence} and
+\ref{appendix:flow-diagram} respectively.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
-  \centering \includegraphics[scale=.3]{diagrams/aegis-class-diagram.png}
-  \caption{Plan of Aegis' Internal Packages}
-  \label{fig:aegisPlan}
-  \bigskip \centering \includegraphics[scale=.3]{diagrams/aegis-file-struct.png}
+  \centering \includegraphics[scale=.3]{diagrams/file-struct.png}
   \caption{Aegis' Initial File Structure}
-  \label{fig:aegisFileStruct}
+  \label{fig:file-struct}
 \end{wrapfigure}
-
-% TODO Aegis: Class diagram
 
 From this diagram a file structure can be created inline with Go standards. Go
 comes with a CLI tool used to initialise a new go module, which is a collection
@@ -766,22 +879,23 @@ to ensure that the same version is used across all environments. Now go commands
 can be used to install go dependencies and then download them to a local vendor
 folder for use in building. Building the project is also done with the go CLI.
 All binaries are stored within the build folder. The initial project structure
-is shown by the figure \ref{fig:aegisFileStruct}.
+is shown by the figure \ref{fig:file-struct}.
 
 \subsubsection*{Version Control}
 \paragraph{}
-I decided that due to the size of this project, that version control would be
-necessary to ensure that the project is maintainable and that there is always a
-backup available. I chose to use Git in combination with GitHub as I am very
-familiar with the platform and it is free to use. I used the Git CLI to
-initialise a new repository within the root directory of the go module. In
-addition, I created a git ignore file to ensure that the vendor and build
-folders are not uploaded.
 
-In order to retain usability, throughout the project I will be committing to the
-remote GitHub repository after each significant change to the project while
-including relevant commit messages. This will make it easier to track changes
-for debugging and maintenance purposes.
+Considering the size of this project, version control is necessary to ensure
+maintainability and the availability of a backup. Git, in combination with
+GitHub, was chosen for version control due to its widespread use, familiarity,
+and cost-free nature. The Git CLI was used to initialize a new repository within
+the root directory of the Go module. Additionally, a \texttt{.gitignore} file
+was created to prevent unnecessary files from being tracked by Git, such as, the
+vendor or build folder.
+
+To maintain usability, commits to the remote GitHub repository will be made
+after each significant change to the project, accompanied by relevant commit
+messages. This approach facilitates easier tracking of changes for debugging and
+maintenance purposes.
 
 \subsubsection*{Structured Logging}
 \paragraph{}
@@ -851,11 +965,6 @@ reduces the need for refactoring in the future. No hard coded values are needed
 for initial development as all values can be stored in the configuration file
 from the start.
 
-\subsubsection*{Testing}
-\paragraph{}
-
-% TODO Testing: Explain Mockery
-
 \subsubsection*{Makefile}
 \paragraph{}
 
@@ -890,7 +999,6 @@ scanners. The creation of external packages allows for the use of a single
 internal implementation for all of these services. This reduces the need for
 extensive changes in the future, making the application more maintainable and
 scalable.
-% TODO SOMEWHERE: Explain that capitals mean exported in Go
 
 \subsubsection*{MinIO}
 \paragraph{}
@@ -1024,7 +1132,7 @@ is then used by the Prometheus server to collect metrics from Aegis.
   \item \texttt{Start}: Initiates the Prometheus server by calling the
         \texttt{ListenAndServe()} method on the HTTP server. An example of the
         generated plaintext output can be found in the appendix at listing
-        \ref{example-exposed-metrics}.
+        \ref{appendix:example-exposed-metrics}.
   \item \texttt{Stop}: Handles the graceful shutdown of the Prometheus server by
         invoking the \texttt{Shutdown} method to close the HTTP server.
 \end{itemize}
@@ -1059,11 +1167,11 @@ function to close the connection when needed.
         with the specified name if it does not exist. The table schema includes
         columns for ID, ObjectKey, BucketName, Result, Antivirus, Timestamp, and
         VirusType. The SQL query used to execute this operation is available in
-        the appendix at listing \ref{create-table-query}.
+        the appendix at listing \ref{appendix:create-table-query}.
   \item \texttt{Insert}: Uses the connection pool to insert a record into the
         specified table with values for ObjectKey, BucketName, Result,
         Antivirus, Timestamp, and VirusType. The SQL query used to insert is
-        available in the appendix at listing \ref{insert-query}.
+        available in the appendix at listing \ref{appendix:insert-query}.
 \end{itemize}
 
 The PostgreSQL instance is provided with a context to close the connection to
@@ -1072,9 +1180,6 @@ the database when the application is shutting down.
 \subsection*{Aegis' Internal Workflow}
 \paragraph{}
 % TODO Aegis' Internal Workflow: Describe what internal means
-
-s
-% TODO Aegis' Internal Workflow: Explain what channels are?
 
 \subsubsection*{Metrics and Collectors}
 \paragraph{}
@@ -1134,8 +1239,6 @@ four fields: a \texttt{logger}, a \texttt{kafka} instance for interacting with
 Kafka, a \texttt{scanChan} channel to forward scan requests and an
 \texttt{eventsCollector} for gathering metrics.
 
-% TODO Events Manager: Explain switch? Concrete types
-
 The \texttt{CreateEventsManager} function creates a new \texttt{EventsManager}
 instance, accepting the necessary arguments. The \texttt{Start} method of the
 \texttt{EventsManager} takes in a context and then enters a loop that uses a
@@ -1168,10 +1271,10 @@ These both combine multiple standard operations into one as follows:
 
 \begin{itemize}
   \item \texttt{MoveObject}: Retrieves an object from the source bucket, puts it
-  into the destination bucket, and removes it from the source bucket.
+        into the destination bucket, and removes it from the source bucket.
   \item \texttt{AddObjectTagging}: Retrieves the object tags from the source
-  bucket, adds the new tags to the existing ones, and puts the combined object
-  tags onto the object.
+        bucket, adds the new tags to the existing ones, and puts the combined
+        object tags onto the object.
 \end{itemize}
 
 \subsubsection*{Object Scanner}
@@ -1187,8 +1290,7 @@ case, another scanner called \texttt{HashScanner} could be created to handle
 this alternate workflow. For this project, the \texttt{ObjectScanner} will be
 the only type of scanner implemented.
 
-The \texttt{CreateObjectScanner} function creates a new \texttt{ObjectScanner}
-instance with the following arguments:
+The \texttt{CreateObjectScanner} function creates a new \texttt{ObjectScanner} instance with the following arguments:
 
 \medskip
 \begin{itemize}
@@ -1207,8 +1309,6 @@ instance with the following arguments:
 All instances passed to the \texttt{CreateObjectScanner} function are interfaced
 to both allow for future mocking and to allow for other abstract implementations
 of the interfaces.
-
-% TODO Object Scanner: Assume the worst mentality explain
 
 The \texttt{ScanObject} method handles the workflow for downloading and scanning
 an object. It takes in an \texttt{object.Object} instance, which it fetches from
@@ -1263,8 +1363,8 @@ configuration parameters such as the cleanup policy and quarantine bucket.
 
 The \texttt{Cleanup} method is called by the \texttt{ObjectScanner} where is
 passes the object after it has been scanned. This method uses a switch
-statement, shown in figure \ref{cleaner-switch}, to determine which policy to
-implement and executes the appropriate cleanup method. If no policy is
+statement, shown in figure \ref{fig:cleaner-switch}, to determine which policy
+to implement and executes the appropriate cleanup method. If no policy is
 specified, the switch statement has a default cause of logging that it will do
 nothing, in the case that the user only wants the audit logs. However with a
 given cleanup policy, the corresponding cleanup method is called. Each of these
@@ -1290,8 +1390,6 @@ use the object store and object store to perform the cleanup.
 \subsubsection*{Dispatcher}
 \paragraph{}
 % TODO Dispatcher: Is implement correct?
-%
-% TODO Dispatcher: Explain go keyword
 
 The \texttt{dispatcher} package is responsible for managing the scanning of
 objects using multiple scanners concurrently. It defines a \texttt{Scanner}
@@ -1343,47 +1441,66 @@ anonymous goroutine to increment an active goroutine counter, and using
 \texttt{defer wg.Done()} when the goroutine has finished to decrement the
 counter. The \texttt{wg.Wait()} call will block until the counter is zero,
 meaning all goroutines will have finishes processing \citep{go-waitgroups}. This
-ensures that all scans that are currently being processed since
-\texttt{scanChan} was close will be completed before the program exits.
+nsures that all scans that are currently being processed since
 
-% TODO Dispatcher: Explain defer
+texttt{scanChan} was close will be completed before the program exits.
 
 \subsubsection*{Main}
 \paragraph{}
 
 
 The main package orchestrates the top-level workflow that Aegis executes
-throughout its operation. The entry point of the program is the \texttt{main}
-function, which performs one task - calling the \texttt{run} function and
-exiting the program based on its return value. This design choice enhances
-extensibility and testability since alternate workflows can be implemented while
-maintaining a single entry point. Furthermore, the \texttt{run} function can be
-tested without running the entire program \citep{go-tiny-abstraction}. The
-\texttt{run} function serves as a abstraction from \texttt{main}, as it
-encompasses Aegis' main workflow.
+
+hroughout its operation. The entry point of the program is the \texttt{main}
+
+unction, which performs one task - calling the \texttt{run} function and
+
+xiting the program based on its return value. This design choice enhances
+
+xtensibility and testability since alternate workflows can be implemented while
+
+aintaining a single entry point. Furthermore, the \texttt{run} function can be
+
+ested without running the entire program \citep{go-tiny-abstraction}. The
+
+texttt{run} function serves as a abstraction from \texttt{main}, as it
+
+ncompasses Aegis' main workflow.
 
 The \texttt{run} function is divided into three distinct sections:
-initialization and configuration, the main loop, and cleanup. The initialization
-and configuration section is responsible for initializing all the components
-Aegis requires and configuring them with the values provided by the
-configuration package.
+
+nitialization and configuration, the main loop, and cleanup. The initialization
+
+nd configuration section is responsible for initializing all the components
+
+egis requires and configuring them with the values provided by the
+
+onfiguration package.
 
 \medskip
 \begin{itemize}
   \item The configuration is loaded from \texttt{config.env}, and the logger is
-        created. An initial context is also created and passed to everything
-        that requires it, apart from the event system.
+
+        reated. An initial context is also created and passed to everything
+
+        hat requires it, apart from the event system.
   \item The metric manager and various metric collectors are created, with the
-        metric manager taking in the Prometheus exporter.
+
+        etric manager taking in the Prometheus exporter.
   \item The audit logger is implemented by the PostgreSQL database.
   \item The object store is implemented by the Minio client.
   \item The event system is implemented by the Kafka consumer with the
-        \texttt{scanChan} passed in as well.
+
+        texttt{scanChan} passed in as well.
   \item The scanning workflow is created. This includes creating the antivirus
-        engines, in this case ClamAV, creating the cleaner with the configured
-        policy and passing both of them to the scanners, namely the object
-        scanner. The scanners are then passed to the dispatcher alongside the
-        \texttt{scanChan}.
+
+        ngines, in this case ClamAV, creating the cleaner with the configured
+
+        olicy and passing both of them to the scanners, namely the object
+
+        canner. The scanners are then passed to the dispatcher alongside the
+
+        texttt{scanChan}.
 \end{itemize}
 \bigskip
 
@@ -1392,47 +1509,75 @@ configuration package.
 % ---- Main loop -----
 
 The main loop is the continuous execution of the goroutines that handle Aegis'
-asynchronous operations. These are the event manager, dispatcher, and metric
-manager. The goroutines are started using the \texttt{go} keyword, which spawns
-a new goroutine to execute the functions in a separate thread.
+
+synchronous operations. These are the event manager, dispatcher, and metric
+
+anager. The goroutines are started using the \texttt{go} keyword, which spawns
+
+ new goroutine to execute the functions in a separate thread.
 
 An additional context is created and parsed into the \texttt{Start} method of
-the \texttt{eventManager}. Multiple channels are then created to handle errors,
-shutdown command, and the shutdown complete with \texttt{errChan},
-\texttt{shutdownChan} and \texttt{done} respectively. The \texttt{Start} methods
-of the \texttt{eventManager}, \texttt{dispatcher} and \texttt{metricManager} are
-called to begin the main workflow of the program.
+
+he \texttt{eventManager}. Multiple channels are then created to handle errors,
+
+hutdown command, and the shutdown complete with \texttt{errChan},
+
+texttt{shutdownChan} and \texttt{done} respectively. The \texttt{Start} methods
+
+f the \texttt{eventManager}, \texttt{dispatcher} and \texttt{metricManager} are
+
+alled to begin the main workflow of the program.
 
 An error channel (\texttt{errChan}) is created to handle errors generated by the
-event manager and metric manager goroutines.
+
+vent manager and metric manager goroutines.
 
 
 % ---- Shutdown -----
 
 Finally, the shutdown section ensures a smooth termination when the program
-receives an interrupt signal or encounters errors from the goroutines. The
-shutdown sequence is vital as it allows Aegis to maintain the progress of
-processed objects when receiving messages, enabling it to resume scanning
-objects from where it left off upon restart. The shutdown sequence unfolds as
-follows:
+
+eceives an interrupt signal or encounters errors from the goroutines. The
+
+hutdown sequence is vital as it allows Aegis to maintain the progress of
+
+rocessed objects when receiving messages, enabling it to resume scanning
+
+bjects from where it left off upon restart. The shutdown sequence unfolds as
+
+ollows:
 
 When an interrupt signal or an error from any goroutine is received, Aegis
-starts its graceful shutdown sequence. A select statement is used to wait for a
-message from either the \texttt{errChan} or \texttt{shutdownChan} channels. If
-any of these channels receive a message, a message or error is logged, and the
-shutdown sequence begins by canceling the context passed to the event manager.
-This action halts the event manager from consuming messages from the Kafka
-consumer and subsequently closes the \texttt{scanChan} channel. As a result,
-incoming notifications remain in the Kafka queue and can be consumed by Aegis
-upon restart leading to no scans lost.
+
+tarts its graceful shutdown sequence. A select statement is used to wait for a
+
+essage from either the \texttt{errChan} or \texttt{shutdownChan} channels. If
+
+ny of these channels receive a message, a message or error is logged, and the
+
+hutdown sequence begins by canceling the context passed to the event manager.
+
+his action halts the event manager from consuming messages from the Kafka
+
+onsumer and subsequently closes the \texttt{scanChan} channel. As a result,
+
+ncoming notifications remain in the Kafka queue and can be consumed by Aegis
+
+pon restart leading to no scans lost.
 
 The code then waits for the \texttt{done} channel to send a message, signaling
-that the goroutines have completed processing the remaining objects in the
-\texttt{scanChan} channel. Once this process is finished, the program stops the
-Prometheus metric exporter and exits with a status code of 0, indicating a
-successful operation.
 
-% TODO Graceful Shutdown: Explain select??
+hat the goroutines have completed processing the remaining objects in the
+
+texttt{scanChan} channel. Once this process is finished, the program stops the
+
+rometheus metric exporter and exits with a status code of 0, indicating a
+
+uccessful operation. To better indicate the graceful shutdown process, a
+
+equence diagram is available in the appendix at figure
+
+ref{appendix:shutdown-sequence}.
 
 \subsection*{Testing}
 
@@ -1445,16 +1590,24 @@ successful operation.
 \subsection*{Kubernetes Deployment}
 \paragraph{}
 
+To make the solution as production-ready as possible, deployment to a Kubernetes
 
+s required.
+
+\subsubsection*{Kubernetes}
+\paragraph{}
+Kubernetes (K8s) is an open-source container orchestration system for automating
+
+eployment, scaling, and management of containerised applications \citep{k8s}.
 
 \subsubsection*{Docker}
 \paragraph{}
+Docker is
+
 
 \subsubsection*{Aegis Containerisation}
 \paragraph{}
 
-\subsubsection*{Kubernetes}
-\paragraph{}
 
 \subsubsection*{Helm}
 \paragraph{}
@@ -1464,7 +1617,8 @@ successful operation.
 
 \section{Results and Evaluation}
 % Evaluate against specification Compare to MinIO Find figures like average scan
-% Compare local vs cluster
+
+% ompare local vs cluster
 \subsection*{}
 
 \section{Product Issues / Future work} % What you would do next time
@@ -1478,23 +1632,52 @@ successful operation.
 
 \section{Appendix}
 % TODO Appendix: Add figures and tables to appendix
-%
-%
-%
+
+\begin{figure}[H]
+  \centering \includegraphics[scale=.38]{diagrams/class-diagram.png}
+  \caption{Plan of Aegis' Internal Packages}
+  \label{appendix:class-diagram}
+\end{figure}
+
+\begin{figure}[H]
+  \centering \includegraphics[scale=0.53]{diagrams/general-sequence.png}
+  \caption{Aegis General Sequence Diagram}
+  \label{appendix:general-sequence}
+\end{figure}
+
+\begin{figure}[H]
+  \centering \includegraphics[scale=0.5]{diagrams/flow-diagram.png}
+  \caption{Aegis Scan Request Flow Diagram}
+  \label{appendix:flow-diagram}
+\end{figure}
+
+\begin{figure}[H]
+  \centering \includegraphics[scale=0.31]{diagrams/shutdown-sequence.png}
+  \caption{Aegis Shutdown Sequence Diagram}
+  \label{appendix:shutdown-sequence}
+\end{figure}
+
 \lstinputlisting[caption={Example Kafka Notification}, label=kafka-notif,
-numbers=left]{assets/example-notif.json}
+
+umbers=left]{assets/example-notif.json}
 
 \bigskip \lstinputlisting[caption={Example Kafka Notification},
-label=clamd-scan]{assets/example-clamd-scan.txt}
+
+abel=appendix:clamd-scan]{assets/example-clamd-scan.txt}
 
 \bigskip \lstinputlisting[caption={Example Exposed Metrics},
-label=example-exposed-metrics]{assets/example-exposed-metrics.txt}
+
+abel=appendix:example-exposed-metrics]{assets/example-exposed-metrics.txt}
 
 \bigskip \lstinputlisting[language=SQL, caption={Create Table SQL Query},
-label=create-table-query]{assets/create-table-query.txt}
+
+abel=appendix:create-table-query]{assets/create-table-query.txt}
 
 \bigskip \lstinputlisting[language=SQL, caption={Insert into Table SQL Query},
-label=insert-query]{assets/insert-query.txt} \bigskip
+
+abel=appendix:insert-query]{assets/insert-query.txt}
+
+\bigskip
 
 \bibliographystyle{cardiff} \bibliography{references}
 
