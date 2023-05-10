@@ -1,0 +1,10 @@
+aegis_antivirus=# select * from aegis_audit_logs;
+ id |   objectkey  | bucketname  |  result  | antivirus |      timestamp      |            virustype
+----+--------------+-------------+----------+-----------+---------------------+---------------------------------
+  1 | 1cb3c3f91b2  | test-bucket | infected | clamav    | 2023-05-10 10:06:09 | Win.Trojan.Emotet-6396293-0
+  2 | 0e969221c2e  | test-bucket | infected | clamav    | 2023-05-10 10:06:09 | Win.Trojan.Agent-1816988
+  3 | 0b599447fdd  | test-bucket | infected | clamav    | 2023-05-10 10:06:09 | Win.Malware.Loki-6881381-0
+  4 | 2a299b9d8f0c | test-bucket | infected | clamav    | 2023-05-10 10:06:09 | Win.Coinminer.Generic-7151253-0
+  5 | sysclass.dll | test-bucket | clean    | clamav    | 2023-05-10 10:06:18 |
+  6 | bidispl.dll  | test-bucket | clean    | clamav    | 2023-05-10 10:06:17 |
+(6 rows)

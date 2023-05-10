@@ -1,0 +1,72 @@
+>>> kubectl get all
+NAME                                                READY   STATUS      RESTARTS      AGE
+pod/aegis-prometheus-node-exporter-stdb4            1/1     Running     0             3h49m
+pod/aegis-kube-state-metrics-776fb858c7-cvnc4       1/1     Running     0             3h49m
+pod/aegis-prometheus-pushgateway-75d654897c-kssmh   1/1     Running     0             3h49m
+pod/aegis-alertmanager-0                            1/1     Running     0             3h49m
+pod/aegis-prometheus-server-5cc5469468-bqztp        2/2     Running     0             3h49m
+pod/aegis-minio-8588645fc6-fdrbj                    1/1     Running     0             3h49m
+pod/aegis-postgresql-0                              1/1     Running     0             3h49m
+pod/aegis-zookeeper-0                               1/1     Running     0             3h49m
+pod/aegis-kafka-0                                   1/1     Running     0             3h49m
+pod/aegis-clamav-668f695bc-t7r66                    1/1     Running     0             92m
+pod/aegis-5d7698d4bf-45xq8                          1/1     Running     1 (88m ago)   89m
+pod/aegis-clamav-cronjob-28062065-m9sxs             0/1     Completed   0             6m29s
+pod/aegis-clamav-cronjob-28062067-q9czx             0/1     Completed   0             4m14s
+pod/aegis-clamav-cronjob-28062069-bjb48             1/1     Running     0             119s
+
+NAME                                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+service/kubernetes                       ClusterIP   10.43.0.1       <none>        443/TCP                      3h52m
+service/aegis-zookeeper-headless         ClusterIP   None            <none>        2181/TCP,2888/TCP,3888/TCP   3h49m
+service/aegis-kafka-headless             ClusterIP   None            <none>        9092/TCP,9093/TCP            3h49m
+service/aegis-postgresql-hl              ClusterIP   None            <none>        5432/TCP                     3h49m
+service/aegis-alertmanager-headless      ClusterIP   None            <none>        9093/TCP                     3h49m
+service/aegis                            ClusterIP   10.43.6.8       <none>        80/TCP                       3h49m
+service/aegis-kube-state-metrics         ClusterIP   10.43.180.151   <none>        8080/TCP                     3h49m
+service/aegis-zookeeper                  ClusterIP   10.43.181.148   <none>        2181/TCP,2888/TCP,3888/TCP   3h49m
+service/aegis-postgresql                 ClusterIP   10.43.90.131    <none>        5432/TCP                     3h49m
+service/aegis-minio                      ClusterIP   10.43.69.101    <none>        9000/TCP,9001/TCP            3h49m
+service/aegis-clamav                     ClusterIP   10.43.20.200    <none>        3310/TCP                     3h49m
+service/minio                            NodePort    10.43.234.39    <none>        9001:30001/TCP               3h49m
+service/aegis-kafka                      ClusterIP   10.43.208.56    <none>        9092/TCP                     3h49m
+service/postgresql                       NodePort    10.43.231.175   <none>        5432:30080/TCP               3h49m
+service/aegis-prometheus-pushgateway     ClusterIP   10.43.88.49     <none>        9091/TCP                     3h49m
+service/aegis-alertmanager               ClusterIP   10.43.78.103    <none>        9093/TCP                     3h49m
+service/aegis-prometheus-node-exporter   ClusterIP   10.43.213.77    <none>        9100/TCP                     3h49m
+service/aegis-prometheus-server          ClusterIP   10.43.195.143   <none>        80/TCP                       3h49m
+service/prometheus                       NodePort    10.43.5.128     <none>        9090:30090/TCP               3h49m
+
+NAME                                            DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+daemonset.apps/aegis-prometheus-node-exporter   1         1         1       1            1           <none>          3h49m
+
+NAME                                           READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/aegis-kube-state-metrics       1/1     1            1           3h49m
+deployment.apps/aegis-prometheus-pushgateway   1/1     1            1           3h49m
+deployment.apps/aegis-prometheus-server        1/1     1            1           3h49m
+deployment.apps/aegis-minio                    1/1     1            1           3h49m
+deployment.apps/aegis-clamav                   1/1     1            1           3h49m
+deployment.apps/aegis                          1/1     1            1           3h49m
+
+NAME                                                      DESIRED   CURRENT   READY   AGE
+replicaset.apps/aegis-kube-state-metrics-776fb858c7       1         1         1       3h49m
+replicaset.apps/aegis-prometheus-pushgateway-75d654897c   1         1         1       3h49m
+replicaset.apps/aegis-prometheus-server-5cc5469468        1         1         1       3h49m
+replicaset.apps/aegis-minio-8588645fc6                    1         1         1       3h49m
+replicaset.apps/aegis-clamav-659c5f8c69                   0         0         0       3h49m
+replicaset.apps/aegis-clamav-668f695bc                    1         1         1       92m
+replicaset.apps/aegis-d564b7ddb                           0         0         0       3h49m
+replicaset.apps/aegis-5d7698d4bf                          1         1         1       89m
+
+NAME                                  READY   AGE
+statefulset.apps/aegis-alertmanager   1/1     3h49m
+statefulset.apps/aegis-postgresql     1/1     3h49m
+statefulset.apps/aegis-zookeeper      1/1     3h49m
+statefulset.apps/aegis-kafka          1/1     3h49m
+
+NAME                                 SCHEDULE    SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+cronjob.batch/aegis-clamav-cronjob   * * * * *   False     1        2m45s           3h49m
+
+NAME                                      COMPLETIONS   DURATION   AGE
+job.batch/aegis-clamav-cronjob-28062065   1/1           2m15s      6m29s
+job.batch/aegis-clamav-cronjob-28062067   1/1           2m15s      4m14s
+job.batch/aegis-clamav-cronjob-28062069   0/1           119s       119s
