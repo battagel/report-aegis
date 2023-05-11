@@ -251,38 +251,38 @@ priority.
 \begin{table}[H] \centering
   \begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|l|} \hline
     \textbf{Requirement} & \textbf{Description} & \textbf{Priority} \\ \hline
-    Provide a way of detecting the latest uploads to the object store & Key part
+    Provide a way of detecting the latest uploads to the object store. & Key part
     of automating scans & Must \\ \hline Record the results of the malware
-    detection within the object store & Some feedback from the scan must be
+    detection within the object store. & Some feedback from the scan must be
     provided to the user. & Must \\ \hline Provide the ability to measure
-    various metrics & Metric
+    various metrics. & Metric
                       collection is very attractive for satisfying production-ready status. & Must \\
     \hline Scale alongside MinIO to ensure that it does not bottleneck the
-    object store at high loads & To handle maximum throughput, the solution
+    object store at high loads. & To handle maximum throughput, the solution
                                  should scale alongside MinIO to ensure it is
                                  production-ready. & Must \\ \hline Provision
-    for future expansion and ongoing maintenance & Having the ability to build
+    for future expansion and ongoing maintenance &. Having the ability to build
                                                    on-top of the project will
                                                    increase the attractiveness
                                                    to users looking to migrate
-                                                   from AWS & Must \\ \hline
+                                                   from AWS. & Must \\ \hline
     \hline
 
     % SHOULD
-    Have a high level of customisability to allow for different use cases &
-                                                                            Gives flexibility to the user but is not a requirement for proof of concept &
+    Have a high level of customisability to allow for different use cases. &
+                                                                            Gives flexibility to the user but is not a requirement for proof of concept. &
                                                                                                                                                           Should \\ \hline Allow for efficient and transparent debugging in the event of
     failure & Creating a robust product mitigates the priority of debugging. &
                                                                                Should \\ \hline
 
                                                                                % COULD
-    Add more complex metrics - Histogram, Gauges, etc & Additional metrics are
+    Add more complex metrics - Histogram, Gauges, etc. & Additional metrics are
                                                         more beneficial in a production environment but unnecessary for size of project
                                                         scope. & Should \\ \hline \hline Provide the choice of multiple antivirus
     engines & not necessary for the proof of concept as it requires too much time. &
-                                                                                     Could \\ \hline Provide a warning when under ``delete'' cleanup policy & not
+                                                                                     Could \\ \hline Provide a warning when under ``delete'' cleanup policy. & not
                                                                                                                                                               necessary for the proof-of-concept as it requires too much time. & Could \\
-    \hline Automatically event queue to bucket notifications & Can be completed
+    \hline Automatically setup bucket notifications to be sent to the event queue. & Can be completed
                                                                manually with instructions instead. Removes customisability from the user if
                                                                done automatically. & Could \\ \hline Supply the MinIO policies the solution
     will use e.g. ``put'' and ``get''. & MinIO denies by default and therefore
@@ -290,12 +290,12 @@ priority.
     \hline \hline
 
     % WONT
-    Prevent the downloading of files if flagged as infected & Is
+    Prevent the downloading of files if flagged as infected. & Is
                                                               covered by cleanup policies. Would also require GUI changes. & Wont \\ \hline
-    Protection from ``inside man'' attacks & The system will be maintained by an
+    Protection from ``inside man'' attacks. & The system will be maintained by an
                                              admin. The admin could attempt to compromise the system. Protection against this
                                              is significantly harder without reducing extensibility. & Wont \\ \hline Provide
-    multiple types of scanners e.g. hash or server based AV scanner & These would
+    multiple types of scanners e.g. hash or server based AV scanner. & These would
                                                                       have different workloads and requirements. Not achievable in project scope. &
                                                                                                                                                     Wont \\ \hline
   \end{tabular}
@@ -311,7 +311,12 @@ priority.
   \begin{tabular}{|l|p{0.7\textwidth}|l|}
     \hline
     \textbf{Requirement} & \textbf{Description} & \textbf{Priority} \\ \hline
-    Speed & The solution must be able to keep up with the rate of uploads made to MinIO. This can be measured by comparing the time difference between uploading an object to MinIO and the object being scanned and tagged & Must \\ \hline
+    Speed & The solution must be able to keep up with the rate of uploads made
+            to MinIO. This can be measured by including a metric that records
+            the scan time of each request which can then be used to find average
+            scan time. & Must \\ \hline
+    Scalability & The solution must scale to meet the demand of the incoming
+                  requests. This can be done with scaling up, across or both.  & Must \\ \hline
     Availability & Over a long period of time, the solution must be able to handle all requests. This can be measured by comparing the number of requests made to the number of requests completed over a large time frame & Must \\ \hline
     Reliability & 100\% of the files uploaded to MinIO must go through the scanning process. The recorded metrics can be used to compare MinIO uploads with the number of objects scanned. It is worth noting that checking the clean and infected results add to the total sum of scanned objects & Must \\ \hline
     Capacity & The solution should be able to handle the maximum number of simultaneous requests that MinIO can handle. This can be measured by monitoring the amount of cache used by the solution under load & Should \\ \hline
@@ -772,12 +777,11 @@ Aegis to use.
 The final dependency that needs to be configured is a data visualisation tool.
 This will not directly be implemented into the microservice but instead will be
 connected to Prometheus to display the metrics collected. Grafana is a popular
-open-source data visualisation tool that allows you to visualise and query
-the metrics produced \citep{multi-cloud}. Grafana enables the creation of
-dashboards that can display multiple relevant metrics in a single view.
-
-Data visualisation will be an important part of this project for both the
-evaluation section and for the system's ongoing maintenance.
+open-source data visualisation tool that allows you to visualise and query the
+metrics produced \citep{multi-cloud}. Grafana enables the creation of dashboards
+that can display multiple relevant metrics in a single view. Data visualisation
+will be an important part of this project for both the evaluation section and
+for the system's ongoing maintenance.
 
 \subsection{Aegis Module Design and Creation}
 \paragraph{}
@@ -792,7 +796,7 @@ performant as possible. MinIO is also written in Go should allow for easier
 integration. Go has certain standards and guidelines for clean architecture that
 should be followed to ensure high usability and efficiency.
 
-Go introduces some specific language that are commonly used during the project.
+Go introduces some specific language that are commonly used during the project \citep{effective-go}.
 A list of common terms and their definitions are available in table
 \ref{table:go-terms}.
 
@@ -1055,8 +1059,11 @@ per message.
         key.
   \item \texttt{decodeMessage}: Decodes a Kafka message by unmarshalling its
         JSON payload and extracting the bucket name and object key. If the
-        message event is \textit{s3:ObjectCreated:PutTagging}, it returns empty
-        strings, as this event does not require processing.
+        message event is \textit{s3:ObjectCreated:PutTagging}, it returns. This
+        is required to break out of the infinite loop that is created when
+        reading put events. Scanning and tagging an object will trigger another
+        put event, which initiates another scan and tag. Specifically ignoring
+        put tagging events prevents this feedback cycle.
 \end{itemize}
 
 During the shutdown process, the \texttt{ReadMessage} function is halted by
@@ -1626,7 +1633,8 @@ provided CLI. K3d provides a convenient way to test Kubernetes deployments and
 configurations before deploying them to a production environment. K3d uses a
 configuration file called \texttt{k3d.yaml} to define the cluster's
 configuration, including creating a registry for storing Docker images, exposing
-ports, and mounting volumes \citep{k3d-conf}.
+ports, and mounting volumes \citep{k3d-conf}. The configuration file is
+available in the figure \ref{fig:expose-services}.
 
 Registries are used to store Docker images that will be available for Kubernetes
 to use. In this case, I create a local registry using K3d which I can then later
@@ -1650,6 +1658,11 @@ because after the binary is build, the source code can be deleted which reduces
 the size of the image, therefore saving resource demand. Once the Docker image
 is built, it can be uploaded to the local container registry, ready for use by
 Kubernetes.
+
+Kubernetes uses CrashLoopBackOff to restart containers that have crashed \citep{k8s-docs}. Each
+time the pod crashes, the time between restarts increases. This is beneficial
+because if Aegis launches before all of its dependencies are online, it will
+enter a CrashLoopBackOff until the dependencies are online.
 
 \subsubsection*{Helm}
 \paragraph{}
@@ -1748,14 +1761,45 @@ ports available in the range 30000-32767. NodePort can be used with all TCP or
 UDP traffic and therefore fits the purposes of all three services that need to
 be exposed; the MinIO console, Prometheus metric server and PostgreSQL audit log
 database. The main drawback with NodePort is that each node must be accessed
-separately, which is not ideal for a multi-node production environment. However, this is
-less of an issue as the solution is only being deployed on a single node.
+separately, which is not ideal for a multi-node production environment. However,
+this is less of an issue as the solution is only being deployed on a single
+node.
 
 The alternative to NodePort is LoadBalancer, which uses ClusterIP and NodePort
 services in combination to access all nodes in the cluster. As this is a single
 node cluster, there is no need to create a load balancer between them, so
 NodePort is sufficient. This can be changed in the Helm chart if need in the
 future.
+
+Below is the \texttt{k3d-conf.yaml} file that configures the NodePort services
+for MinIO, Prometheus and PostgreSQL.
+
+\begin{figure}[H]
+\begin{lstlisting}
+  registries:
+    create:
+      name: registry.localhost
+      host: "0.0.0.0"
+      hostPort: "12345"
+  ports:
+    # Expose MinIO
+    - port: 9001:30001
+      nodeFilters:
+        - server:0
+    # Expose Prometheus
+    - port: 9090:30090
+      nodeFilters:
+        - server:0
+    # Expose Postgresql
+    - port: 5432:30080
+      nodeFilters:
+        - server:0
+\end{lstlisting}
+  \caption{Exposing of Services}
+  \label{fig:expose-services}
+\end{figure}
+
+% TODO Exposing Service: Explain it specifically?
 
 % TODO Kubernetes Deployment: Diagram TODO Kubernetes Deployment: Output log
 
@@ -1789,7 +1833,65 @@ Prometheus deployment to scrape metrics from the Aegis service on the port 2112.
 % When prometheus needs to connect to aegis How to connect to postgresql and
 % prometheus
 \paragraph{}
-The Helm chart deployment of ClamAV
+On deployment, the Helm chart deployment of ClamAV automatically creates a
+cronjob that downloads the latest version of the virus database. Initially, this
+cronjob downloads the entire database but on subsequent runs only downloads the
+updates in daily releases. Upon completion, ClamAV has access to a total of
+almost 8.7 million virus signatures shown in figure \ref{fig:clamav-db}.
+Alongside the number of signatures, the figure also shows the active
+configuration of ClamAV, namely the maximum file size, the recursion level and
+the file types that are scanned.
+
+During development, the database was downloaded multiple times, resulting in the
+cluster being rate-limited and unable to update its signature definitions.
+Consequently, the antivirus returned a clean result for every file, as no
+matching signatures were found in its empty database. In a production
+environment, this issue should not arise if the database is pulled infrequently.
+However, if the system suddenly scales out to meet increased demand, the cluster
+IP could be rate-limited again.
+
+\begin{figure}[H]
+  \begin{lstlisting}
+    Starting Freshclamd
+    Starting ClamAV
+    Socket for clamd not found yet, retrying (0/1800) ...ClamAV update process started at Wed May 10 11:43:49 2023
+    daily.cvd database is up-to-date (version: 26902, sigs: 2034320, f-level: 90, builder: raynman)
+    main.cvd database is up-to-date (version: 62, sigs: 6647427, f-level: 90, builder: sigmgr)
+    bytecode.cvd database is up-to-date (version: 334, sigs: 91, f-level: 90, builder: anvilleg)
+    Socket for clamd not found yet, retrying (132/1800) ...Wed May 10 11:46:04 2023 -> Limits: Global time limit set to 120000 milliseconds.
+    Wed May 10 11:46:04 2023 -> Limits: Global size limit set to 419430400 bytes.
+    Wed May 10 11:46:04 2023 -> Limits: File size limit set to 104857600 bytes.
+    Wed May 10 11:46:04 2023 -> Limits: Recursion level limit set to 17.
+    Wed May 10 11:46:04 2023 -> Limits: Files limit set to 10000.
+    Wed May 10 11:46:04 2023 -> Limits: MaxEmbeddedPE limit set to 41943040 bytes.
+    Wed May 10 11:46:04 2023 -> Limits: MaxHTMLNormalize limit set to 41943040 bytes.
+    Wed May 10 11:46:04 2023 -> Limits: MaxHTMLNoTags limit set to 8388608 bytes.
+    Wed May 10 11:46:04 2023 -> Limits: MaxScriptNormalize limit set to 20971520 bytes.
+    Wed May 10 11:46:04 2023 -> Limits: MaxZipTypeRcg limit set to 1048576 bytes.
+    Wed May 10 11:46:04 2023 -> Limits: MaxPartitions limit set to 50.
+    Wed May 10 11:46:04 2023 -> Limits: MaxIconsPE limit set to 100.
+    Wed May 10 11:46:04 2023 -> Limits: MaxRecHWP3 limit set to 16.
+    Wed May 10 11:46:04 2023 -> Limits: PCREMatchLimit limit set to 100000.
+    Wed May 10 11:46:04 2023 -> Limits: PCRERecMatchLimit limit set to 2000.
+    Wed May 10 11:46:04 2023 -> Limits: PCREMaxFileSize limit set to 104857600.
+    Wed May 10 11:46:04 2023 -> Archive support enabled.
+    Wed May 10 11:46:04 2023 -> AlertExceedsMax heuristic detection disabled.
+    Wed May 10 11:46:04 2023 -> Heuristic alerts enabled.
+    Wed May 10 11:46:04 2023 -> Portable Executable support enabled.
+    Wed May 10 11:46:04 2023 -> ELF support enabled.
+    Wed May 10 11:46:04 2023 -> Mail files support enabled.
+    Wed May 10 11:46:04 2023 -> OLE2 support enabled.
+    Wed May 10 11:46:04 2023 -> PDF support enabled.
+    Wed May 10 11:46:04 2023 -> SWF support enabled.
+    Wed May 10 11:46:04 2023 -> HTML support enabled.
+    Wed May 10 11:46:04 2023 -> XMLDOCS support enabled.
+    Wed May 10 11:46:04 2023 -> HWP3 support enabled.
+    Wed May 10 11:46:04 2023 -> Self checking every 600 seconds.
+    Wed May 10 11:46:04 2023 -> Set stacksize to 1048576
+  \end{lstlisting}
+    \caption{ClamAV Virus Database Size}
+    \label{fig:clamav-db}
+\end{figure}
 
 \subsection{Solution Workflow}
 \paragraph{}
@@ -1827,18 +1929,418 @@ standard deployment of the solution.
 Because of the metrics collection we implemented earlier, getting values such as
 files scanned and total infected files already present. Using the exposed
 Prometheus, Grafana can be used to visualise these metrics. These graphs can
-help us evaluate the performance of the solution.
+help us evaluate the performance of the solution. In figure \ref{fig:grafana} a
+dashboard has been created to visualise the use of the solution. Its worth
+noting that for a successful solution, the total events messages, total scanned
+objects and total cleaned objects must all be equal. This ensures that all
+objects have been processed to completion through Aegis. Ideally, event errors,
+scanner errors and cleaner errors should all be zero but a value of 12 is
+displayed for demonstration purposes.
+
+\begin{figure}[H]
+  \centering \includegraphics[scale=0.31]{images/grafana.png}
+  \caption{An Example Grafana Dashboard}
+  \label{fig:grafana}
+\end{figure}
 
 \subsection{Performance Evaluation}
 \paragraph{}
 
+% - [ ] Evaluate performance of the service
+%   - [ ] Setup time
+%   - [ ] Scan time
+%   - [ ] Memory usage
+%   - [ ] CPU usage
+%   - [ ] Object size limits
+% Eval
+% Shutdown no loss
+% No errors
+% 100% detection
+% Large file sizes
+% Number of files
 
+To access the performance of the solution, various metrics can be used. Many of
+these are already available using Prometheus and Grafana. However, extra metrics
+will be collected to aid the evaluation process. All of the metrics collected
+were gathered from consumer grade hardware that is not fit for a production
+environment. This will negatively impact the performance of the solution and
+should be taken into account when evaluating the results. For this evaluation,
+the cluster is deployed on an Apple M1 Macbook Pro with 16GB of RAM and a 10
+core CPU giving 10GB and 8 cores to Docker.
+
+\subsubsection*{Setup Time}
+\paragraph{}
+
+This metric is less important as it is only performed once. However, it is still
+valuable for our analysis as it represents the time taken to deploy the a single
+node in a cluster. This is measured from the time the \texttt{make create-node}
+to first being able to perform a scan in table \ref{tab:setup_timings}. This
+includes the time taken to download the virus signature database.
+
+\begin{table}[H] \centering
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Setup Task}             & \textbf{Time} \\ \hline
+    Cluster started                 & 00:00         \\ \hline
+    Cluster building complete       & 00:20         \\ \hline
+    Docker Image pulled             & 00:27         \\ \hline
+    Dependency repositories checked & 01:39         \\ \hline
+    Dependencies downloaded         & 02:40         \\ \hline
+    Pods starting                   & 04:41         \\ \hline
+    Aegis first online              & 06:42         \\ \hline
+    MinIO online                    & 11:13         \\ \hline
+    Kafka online                    & 14:31         \\ \hline
+    Virus database downloaded       & 16:38         \\ \hline
+    First scan performed            & 16:45         \\ \hline
+  \end{tabular}
+  \caption{Cluster Setup Times}
+  \label{tab:setup_timings}
+\end{table}
+
+The majority of the working time is waiting for the dependencies to come online,
+namely ClamAV to download its virus signature database. Aegis is the first pod
+to come online but enters into CrashLoopBackOff until all other pods are online.
+
+\subsubsection*{Scan Throughput}
+\paragraph{}
+Over a longer period of time, the scan throughput can be measured. This could be
+interpreted as two separate metrics, the total number of files scanned and the
+total size of files scanned. Both are valuable metrics to measure to access the
+sustained performance of the solution. Calculating throughput in equation
+\ref{eq:throughput} can be done by uploading a known number of files with a
+known size and measuring the time taken to complete the scan. The results from
+scanning a two folders, containing various media types, will be added in the table
+\ref{tab:scan_throughput} with average throughput calculated.
+
+\begin{equation}
+  \label{eq:throughput}
+  Throughput = \frac{Total\ Scanned\ Size}{Time\ Taken}
+\end{equation}
+
+\begin{table}[H] \centering
+  \begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Metric}       & \textbf{Folder 1} & \textbf{Folder 2} & \textbf{Average Throughput}\\ \hline
+    Files Scanned         & 280          &   1218         & 1.48 Files/s        \\\hline
+    Size of Files Scanned & 7370MB       &   7200MB       & 14.37 MB/s \\
+    \hline
+  \end{tabular}
+  \caption{Scan Throughput}
+  \label{tab:scan_throughput}
+\end{table}
+
+Folder one took 8.5 minutes and folder two took 8.4 minutes to complete.
+Overall, the system is able to scan at the rate of 14.37MB/s or 50.5GB/h. For a
+single node setup this is a good result as this covers the average network speed
+of most home users. However, scaling up of the hardware is need for it to
+achieve evaluate the full performance capabilities of the solution. The number of
+files per second is less informative as the folder used contained a multitude of
+different file sizes and types therefore is not a good representation of the
+performance.
+
+\subsubsection*{Scan Speed}
+Unfortunately the intended inclusion of a scan time metric through Prometheus
+became out of scope. However, calculating the scan speed can still be done using
+the output logs from Aegis. This can be done as scan time is logged for each
+file scanned, it is just not collected. Using a grep and awk in figure \ref{fig:scan-time-commands}, all scan times
+can be extracted and averaged
+
+\begin{figure}[H]
+  \begin{lstlisting}
+    kubectl logs aegis-d564b7ddb-fvvmj | grep -o 'Time: [0-9]*.[0-9]* sec' | awk '{ for (i=1; i<=NF; i++) { sum+=$i; count++ } } END { print sum/count }'
+    79.4085
+  \end{lstlisting}
+    \caption{Calculate Scan Time Commands}
+    \label{fig:scan-time-commands}
+\end{figure}
+
+The result of 79.4085 seconds is a very high amount of time. This result was from a system under maximum load on restricted hardware. If the same commands are run on a system not under constant load the results change dramatically. For a single scan, time taken is at 0.39 seconds. This shows that very quickly the antivirus engine gets swamped by a queue of files to scan.
+
+\subsubsection*{Scan Lag}
+\paragraph{}
+Scan lag is the time taken between uploading and the scan completing. This can
+be visualise by measuring the time taken between receiving a put event and to
+performing the scan on a folder. Grafana can be used to generate this graph as shown in the
+figure \ref{fig:scan-lag}. Note this folder is different to the one used in the
+previous example.
+
+\begin{figure}[H]
+  \centering \includegraphics[scale=0.31]{images/scan-lag.png}
+  \caption{Scan Lag Graph - Scans vs Time}
+  \label{fig:scan-lag}
+\end{figure}
+
+This figure shows that there is a moderate amount of scan lag. This is due to
+the high scan request load and the intensive nature of virus scanning against
+large signature databases. In the graph the orange areas represents scan lag.
+This is the time difference between Aegis receiving a put event and the scan
+completing. The yellow area is the current scan progress. Overtime, the yellow
+area matched the orange area as all the scan requests are processed. With the
+process starting at 13:01:30, the peak of the orange area is at 13:03:45 which
+is only 2:15 after the first upload. The peak yellow area is at 13:10:45 showing
+that it took a total of 9:15 to complete the scan of the whole folder, a
+difference of 7 minutes scan lag time. Its worth noting that the processing of
+the scan requests is linear meaning that the process is never being bottlenecked
+at any point. This backs up the previous assumption that the evaluation is
+limited by hardware and not the capabilities of the solution.
+
+If the users upload rate to MinIO stays below 14.37MB/s, the scan lag should be
+minimal as the scan will be able to keep up with the upload rate. However, if
+the upload rate exceeds this, the incoming scans will start to queue up and scan
+lag will increase exponentially.
+
+\subsubsection*{Scan Reliability}
+\paragraph{}
+Throughout the performance evaluation above, Grafana has displayed a running
+total of all scan requests, scanned files and any error occurred in figure
+\ref{fig:scan-reliability}. This is a good indicator of the reliability of the
+solution as no scans are being missed and no errors have been recorded.
+
+\begin{figure}
+  \centering \includegraphics[scale=0.31]{images/scan-reliability.png}
+  \caption{Scan Reliability}
+  \label{fig:scan-reliability}
+\end{figure}
+
+\subsubsection*{Scan Accuracy}
+\paragraph{}
+Scan accuracy is redundant to measure as the solution only uses ClamAV to scan
+files. If higher accuracy than what ClamAV provides is required, adding more
+antivirus engines is possible with the aggregate scan results being determined
+by the union of positive scan results \citep{av-comparison}. This is shown in the figure
+\ref{scan-union}.
+
+\begin{figure}[H]
+  \centering \includegraphics[scale=0.45]{diagrams/scan-union.png}
+  \caption{Combined AV Effectiveness}
+  \label{scan-union}
+\end{figure}
+
+
+\subsubsection*{Shutdown Reliability}
+\paragraph{}
+During an unexpected error or graceful shutdown process, reliably stopping the
+scanning process is essential to ensure that no files are left in a state of
+limbo. To evaluate this, a set of scans will be requested with known malicious
+files. These files should be removed under the corresponding cleanup policy and
+therefore no files should be left in the object store. Mid-scan, an interrupt
+signal will be given to Aegis causing it to enter graceful shutdown. The results
+of running the test are available in the appendix at
+\ref{appendix:shutdown-logs}.
+
+As expected, zero files are left in the object store after Aegis had restarted
+and continued processing the scan requests. This shows that there are no gaps in
+the execution of the solution if any error conditions would occur.
 
 \subsection{Comparing Functional Requirements}
 \paragraph{}
 
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|p{0.3\textwidth}|p{0.7\textwidth}|}
+    \hline
+    \textbf{Requirement} & \textbf{Evaluation} \\ \hline
+    Provide a way of detecting the latest uploads to the object store. & This
+                                                                        requirement
+    has been achieved. Kafka has been successfully connected to MinIO and can
+                                                                        read all
+    put events given by MinIO. It can also hold events if Aegis is not ready to
+                                                                        receive
+                                                                        scan
+                                                                        requests
+    in the event of an error or shutdown. \\ \hline
+    Record the results of the malware detection within the object store. &
+                                                                          Provided
+                                                                          are
+                                                                          three
+                                                                          cleanup
+    policies, remove, tag or quarantine. This requirement has been met and over
+                                                                          achieved
+    as there are multiple options for the user to choose from. \\ \hline
+    Provide the ability to measure various metrics. & As shown by
+                                                     \ref{fig:grafana}, various
+                                                     metrics have been collected
+    throughout the Aegis' lifetime. These have also been consumed and
+                                                     analysis has been
+                                                     performed. This requirement
+    has been met. \\ \hline
+    Scale alongside MinIO to ensure that it does not bottleneck the object store
+    at high loads. & This requirement has been partially met. Aegis never
+                    bottlenecks the object store during execution due to the use
+    of an event queue. However, Aegis does not effectively scale with MinIO to
+                    keep up with the incoming uploads. \\ \hline
+    Provision for future expansion and ongoing maintenance. & The solution fully
+                                                             meets this
+                                                             requirement for
+                                                             many reasons.
+                                                             Firstly, structured
+                                                             logging,
+                                                             configuration files
+                                                             metric collection
+                                                             and audit logging
+                                                             means that
+                                                             active maintenance
+                                                             of the solution
+                                                             should be as easy
+                                                             as possible. In
+                                                             addition, Aegis has
+                                                             been designed to be
+                                                             as extensible as
+                                                             possible with room
+                                                             for multiple types
+                                                             of scanning
+                                                             workflows and
+                                                             multiple antivirus engines.
+                                                              \\ \hline \hline
+
+    Have a high level of customisability to allow for different use cases. &
+                                                                             This
+                                                                             requirement
+    has been met as a configuration file is available for Aegis that allows
+                                                                             customisation
+                                                                             of
+                                                                             all
+    endpoints, name of the topic, database details, the cleanup policy and make
+                                                                             more.
+                                                                             There
+                                                                             is
+                                                                             also
+                                                                             room
+                                                                             to
+                                                                             add
+                                                                             different
+                                                                             types
+                                                                             of
+                                                                             scanning
+                                                                             workflows
+                                                                             and
+                                                                             antivirus engines.
+  \\ \hline
+    Allow for efficient and transparent debugging in the event of failure. & Structured
+    logging is included that provides insightful feedback at various levels. In
+                                                                             addition,
+    metric collection and audit logging make it easy to keep track of errors and
+    scan history. Including a log aggregation tool, such as Splunk, could
+                                                                             improve
+                                                                             the
+    satisfaction of this requirement. \\ \hline
+
+    Add more complex metrics - Histogram, Gauges, etc. & Although many useful
+                                                        metrics are collected,
+                                                        no complex metrics have
+                                                        been added. These have a
+    minimal impact on the overall solution so have not been prioritised. \\ \hline \hline
+    Provide the choice of multiple antivirus engines. & No other antivirus
+                                                       engines have been added
+                                                       to the solution. However,
+    the structure is in place to allow for additions in the future.\\ \hline
+    Provide a warning when under ``delete'' cleanup policy. & This requirement
+                                                              was partially met
+                                                              as selecting the
+                                                              delete policy is
+                                                              done within the
+                                                              \texttt{config.env}
+    file. In the file a commented warning is provided. In the future, if the
+                                                              configuration is
+                                                              available via GUI
+                                                              this requirement
+                                                              would move up in
+                                                              priority from
+                                                              could to should. \\ \hline
+    Automatically setup bucket notifications to be sent to the event queue. & In
+    practice, manually setting up the solution must only be done once. This lead
+    the decision that thorough documentation was a better use of the limited
+                                                                              time
+                                                                              available.
+    \\ \hline
+    Supply the MinIO policies the solution will use e.g. ``put'' and ``get''. &
+   This requirement is relatively simple but has remained out of scope. This
+                                                                                will
+                                                                                need
+    to be completed to be fully production-ready to provide information to
+                                                                                inform
+                                                                                any
+                                                                                future
+                                                                                users
+                                                                                of
+                                                                                the
+                                                                                access
+                                                                                it requires
+                                                                              \\ \hline \hline
+
+    Prevent the downloading of files if flagged as infected. & This requirement
+                                                              was not met as it
+                                                              involved making
+                                                              changes to the
+                                                              MinIO web console.
+    This was determined to be out of scope due to the additional time required
+                                                              to research the
+                                                              implementation for
+    a insignificant change to the solution. \\ \hline
+    Protection from ``inside man'' attacks. & No protection from ``inside man''
+                                              attacks has been added. This is
+                                              still not a priority for systems
+                                              where users will have a wide range
+    of abilities already, such as deleting or reading files. \\ \hline
+    Provide multiple types of scanners e.g. hash or server based AV scanner. &
+                                                                               Only
+                                                                               a
+    single workflow for scanning files has been provided. However, provisions
+                                                                               for
+                                                                               implementing
+    this in the future has been put into place, if required.  \\ \hline
+  \end{tabular}
+  \caption{Functional Requirements with Evaluation}
+  \label{tab:functional_reqs_evaluation}
+\end{table}
+
 \subsection{Comparing Non-Functional Requirements}
 \paragraph{}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|p{0.1\textwidth}|p{0.9\textwidth}|}
+    \hline
+    \textbf{Requirement} & \textbf{Evaluation} \\ \hline
+    Speed & As seen in the scan throughput section, if the incoming scan
+            requests stays at or below 14.37MB/s, then the solution will keep up
+    with MinIO. However, it suffers dramatically under high load with average
+            scan times rising to 79. This is does not satisfy this requirement
+            under maximum throughput conditions. In a less intensive
+            scenario, scans are performed within 0.39 which is a very good
+            result. More focus in the future should be placed on quickly scaling
+    out the antivirus engines to meet high demand.\\ \hline
+    Scalability & The solution lacks to achieve this requirement. Provisions for
+          scaling out have been added but the scope constraints prevented them
+                  from being fully implemented. This negatively affects the
+                  project as this requirement was a priority. & \\ \hline
+    Availability & Scan reliability has shown that throughout benchmarking the
+                   cluster has not become unavailable. While object store
+                   availability is the responsibility of MinIO, the stability of
+    the cluster is apart of the solution. As there were no unexpected downtime,
+                   this requirement has been met. \\ \hline
+    Reliability & The reliability of the solution has proven to be good. No
+                  unexpected errors happened during the evaluation process. When
+    performing a test of Aegis' graceful shutdown procedure, zero files were
+                  left unprocessed.\\ \hline
+    Capacity & As Aegis only uses one temporary cache file, the maximum capacity
+               needed can be calculated by multiplying the average throughput by
+               the average scan time. This results in an average capacity
+               required as $14.37$MB/s x $79.4$s$ = 1.14$GB. This is
+               highly achievable for the majority of production environments. \\ \hline
+    Security & The security of the system is largely reliant on MinIO's built-in
+    authentication. This stops unwanted puts / gets from the system without
+               Aegis getting involved. All files scanned do not leave the
+               cluster and therefore are sheltered from external access. \\ \hline
+    Privacy & As the scanned files remain inside of the cluster, privacy is
+    preserved. In addition, the only metrics collected are counting occurrences
+              and never interpret the contents of any file. ClamAV does look at
+              internal contents but apart from virus signature database
+              downloads, does not have any outside access. \\ \hline
+  \end{tabular}
+  \caption{Non-Functional Requirements with Evaluation}
+  \label{tab:non_functional_reqs_evaluation}
+\end{table}
 
 \subsection{Testing Evaluation}
 \paragraph{}
@@ -1865,11 +2367,80 @@ constantly assessed, therefore catching more errors before deployment.
 Given the analysis of the functional and non-functional requirements...
 
 \section{Product Issues / Future work} % What you would do next time
-\subsection{}
+\paragraph{}
+
+Although the solution is working, it is not without its limitations. From the
+evaluation, two categories of issues have been identified. Firstly, the hard
+constraint of the project deadline has meant that some features have no been
+implemented or compromises have had to be made. This will have negatively
+affected the quality of the solution These issues are listed below.
+
+\begin{itemize}
+  \item Lack of scalability from load balancing antivirus engines. This impacts
+        the scalability of the solution as no scanning can happen in parallel
+        when the system is under load. This could be solved by implementing a
+        horizontal pod auto-scaler to adaptively scale number of concurrent pods
+        available based on the demand of compute resources \citep{scale-pods}.
+  \item Diversify metric collection so that a larger range of metrics are
+        collected. For example, the average scan time of a file and the average
+        time a file is in the cache. This could provide more insights into the
+        performance of the solution.
+  \item The testing code coverage could be improved to achieve 100\% coverage
+        for both internal and external pkg packages. This would ensure that all
+        code going into production has had some level of testing. Using table
+        driven tests could help improve the coverage of edge cases and error
+        conditions \citep{table-driven-tests}.
+  \item While the scanned files are removed (if AEGIS\_REMOVE\_AFTER\_SCAN is
+        true), the sub-folders under the buckets are not. This is a hard issue
+        to solve as it is possible to delete a folder while another file is
+        being downloaded to it. The impact of retaining all folders is small as
+        an empty folder uses minimal storage space but over time writing to the
+        store could slow down. One possible solution is to have all files in a
+        bucket in a single folder. This could lead to naming conflicts which a
+        UUID could solve \citep{UUID}. Another solution could be having a
+        retention policy on each folder which would delete the folder after a
+        given time or under a given condition.
+\end{itemize}
+
+Secondly, new opportunities have identified themselves during the development of
+the solution. These could be implemented in future projects related to this
+area. Below is a list of the issues identified.
+
+\begin{itemize}
+  \item MinIO has the ability to integrate Audit logging and Prometheus metrics
+        into its existing metric collection service. Combining the two could
+        provide a more complete picture of the system to draw conclusions from.
+  \item No feature tests have been written for this solution. Feature tests
+        would test multiple packages together to ensure that the overall
+        workflow of the system is correct. This testing would be valuable for
+        ongoing production use.
+  \item The solution only deploys to a single node cluster running on a single
+        machine. In a production environment, this would not be the case and
+        therefore more work is needed to ensure that the solution can be
+        deployed to a multi node cluster.
+  \item Using the MinIO web console, the results of the scan could be viewed. In
+        addition, warning messages could be added to inform the user of infect
+        files. Depending on the production use, this feature could be valuable.
+  \item Store the scan result in metadata rather than tagging to improve
+        immutability of tags.
+  \item Calculate the hash of a object, upon performing put, inside of MinIO
+        using lambda functions \citep{minio-lambda}. This reduces the size of
+        the download required to scan a file. However, removes the ability for any
+        antivirus engine to use any fuzzy matching.
+  \item Have a selection of ready-to-go antivirus engines that the user can
+        choose from to improve overall scanning accuracy \citep{av-comparison}.
+  \item Put tagging messages are ignored by the event queue. This could
+        potentially cause a security leak where a change is tags are not
+        scanned. The risk of this is minor as only a user with access to the
+        system can modify the tag which could class as an inside man attack
+        which was not in the scope of the project but still should be fixed in
+        the future.
+\end{itemize}
 
 % Security Scalability Integrated logging and audit logging Testing coverage
 % Performance -> Rust etc Deployment -> Kubernetes expand the deployment to
-% multi node Log aggregation -> Humio
+% multi node Log aggregation -> Splunk
+% ScanTime metrics -> Prometheus
 
 \section{Conclusions}
 \subsection{}
@@ -1954,12 +2525,15 @@ label=appendix:insert-query]{assets/insert-query.txt}
 \lstinputlisting[basicstyle=\tiny, language=SQL, caption={Example Audit
   Log}, label=appendix:audit-log]{assets/audit-logs.txt}
 
+% TODO Testing Evaluation: Go tests output
 % \bigskip \lstinputlisting[caption={Output of Unit Tests},
 % label=appendix:go-tests]{assets/go-tests.txt}
 
 \lstinputlisting[basicstyle=\tiny, caption={Output of kubectl get all},
 label=appendix:kube-get-all]{assets/kube-get-all.txt}
 
+\lstinputlisting[basicstyle=\tiny, caption={Shutdown Logs of Aegis},
+label=appendix:shutdown-logs]{assets/shutdown-logs.txt}
 \bigskip
 
 % TODO References: Check them all

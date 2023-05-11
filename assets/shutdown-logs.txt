@@ -1,0 +1,37 @@
+# Normal scanning
+
+...
+2023-05-11T16:26:29.844Z	DEBUG	Scanning file with antiviruses	{"antiviruses": [{}], "bucketName": "bucket", "objectKey": "infected/bc9b8cf70b35658a26e6a38e7e4e2ec24124540d78d38181444739bcb4190e52"}
+2023-05-11T16:26:30.343Z	INFO	Shutting down Aegis
+2023-05-11T16:26:30.344Z	DEBUG	Non fatal error related to shutdown
+2023-05-11T16:26:30.344Z	DEBUG	Stopping Kafka consumer
+2023-05-11T16:26:30.344Z	DEBUG	Closing Kafka Reader
+2023-05-11T16:26:33.631Z	DEBUG	clamdscan output	{"output": "/app/cache/bucket/infected/5942a02bc0a0e32875bc71e9a678b065d5f0e144938467a3590ba884884153d3: Win.Trojan.PonyStealer-9831667-0 FOUND\n\n----------- SCAN SUMMARY -----------\nInfected files: 1\nTime: 4.872 sec (0 m 4 s)\nStart Date: 2023:05:11 16:26:28\nEnd Date:   2023:05:11 16:26:33\n"}
+2023-05-11T16:26:33.633Z	DEBUG	virus type output	{"virusType": "Win.Trojan.PonyStealer-9831667-0"}
+2023-05-11T16:26:33.633Z	DEBUG	Incrementing files scanned counter
+2023-05-11T16:26:33.633Z	DEBUG	Adding audit log
+2023-05-11T16:26:33.641Z	WARN	Infected file	{"bucketName": "bucket", "objectKey": "infected/5942a02bc0a0e32875bc71e9a678b065d5f0e144938467a3590ba884884153d3"}
+2023-05-11T16:26:33.641Z	DEBUG	Incrementing infected files scanned counter
+2023-05-11T16:26:33.641Z	DEBUG	Cleaning up	{"cleanupPolicy": "remove"}
+...
+
+
+# Finishing existing scans
+
+...
+2023-05-11T16:26:55.863Z	DEBUG	virus type output	{"virusType": "Win.Trojan.Generic-7363"}
+2023-05-11T16:26:55.863Z	DEBUG	Incrementing files scanned counter
+2023-05-11T16:26:55.863Z	DEBUG	Adding audit log
+2023-05-11T16:26:55.869Z	WARN	Infected file	{"bucketName": "bucket", "objectKey": "infected/8cbd16eb6ad744f0463991aff04bbbb8ce7e51635dd68025788e9e63ca79d62b"}
+2023-05-11T16:26:55.869Z	DEBUG	Incrementing infected files scanned counter
+2023-05-11T16:26:55.869Z	DEBUG	Cleaning up	{"cleanupPolicy": "remove"}
+2023-05-11T16:26:55.869Z	DEBUG	Removing infected object	{"bucketName": "bucket", "objectKey": "infected/8cbd16eb6ad744f0463991aff04bbbb8ce7e51635dd68025788e9e63ca79d62b"}
+2023-05-11T16:26:55.869Z	DEBUG	Removing object	{"bucketName": "bucket", "objectKey": "infected/8cbd16eb6ad744f0463991aff04bbbb8ce7e51635dd68025788e9e63ca79d62b"}
+2023-05-11T16:26:55.880Z	DEBUG	Incrementing remove object counter
+2023-05-11T16:26:55.880Z	DEBUG	Successfully removed infected object	{"bucketName": "bucket", "objectKey": "infected/8cbd16eb6ad744f0463991aff04bbbb8ce7e51635dd68025788e9e63ca79d62b"}
+2023-05-11T16:26:55.880Z	DEBUG	Incrementing cleaner object removed counter
+2023-05-11T16:26:55.880Z	DEBUG	Removing file from cache	{"cachePath": "cache/bucket/infected/8cbd16eb6ad744f0463991aff04bbbb8ce7e51635dd68025788e9e63ca79d62b"}
+2023-05-11T16:26:55.886Z	DEBUG	Dispatcher loop stopped
+2023-05-11T16:26:55.886Z	DEBUG	Stopping Metrics Manager
+2023-05-11T16:26:55.886Z	DEBUG	Stopping Metric Server
+2023-05-11T16:26:55.886Z	DEBUG	Prometheus server closed, exiting
