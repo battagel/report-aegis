@@ -27,6 +27,9 @@
 \DeclareCaptionFont{captionfontsize}{\fontsize{12}{14}\selectfont}
 \captionsetup{font=captionfontsize}
 
+% Enable numbers for some reason
+\pagestyle{plain}
+
 \begin{document}
 
 
@@ -48,25 +51,36 @@ their contributions.
 \bigskip
 
 \begin{abstract}
-  Lorem Ipsum
+  The rapid increase in data production has amplified the necessity for robust
+  and secure data storage systems. MinIO, an open-source object storage
+  platform, offers cost-effective and scalable solutions but lacks an integrated
+  malware detection feature, thereby posing potential risks to user data. This
+  project seeks to augment MinIO by incorporating a scalable malware detection
+  system, with the goal of maintaining MinIO's performance and scalability. In
+  essence, this project aspires to enhance the security features of MinIO while
+  offering a valuable experience in deploying production-grade solutions within
+  a microservice framework.
 \end{abstract}
 
 \pagebreak
 
 \tableofcontents{}
 
+\pagebreak
+
 \section{Introduction}
 \subsection{Overview}
 \paragraph{}
 The exponential growth of data generation has made data storage an increasingly
-important aspect for both individuals and organizations alike
+important aspect for both individuals and organisations alike
 \citep{data-storage}. Object storage has emerged as a promising solution due to
 its ability to store vast amounts of unstructured data in a cost-effective and
-scalable manner \citep{object-storage-market}. Unlike traditional storage
-techniques, object storage abstracts the lower-level functions inside of the
-data store \citep{object-storage}. Functions such as, space management and
-access control are handled on an per object basis, allowing for greater
-flexibility and security \citep{object-storage}.
+scalable manner \citep{object-storage-market}. Object storage improves upon
+traditional storage ideas by moving lower-level functions inside of the storage
+device itself to raise the level of presented abstraction to the
+user \citep{object-storage}. Functions such as, space management and access
+control are handled by the device while objects are accessed through a
+storage interface \citep{object-storage}.
 
 % Market and competition
 One of the most widely used object storage platforms is Amazon S3, which
@@ -79,7 +93,7 @@ and enterprise purposes, at a reduced cost compared to Amazon S3
 \citep{minio-pricing}. MinIO offers a wide range of features, including high
 performance, data replication, encryption and erasure coding \citep{minio}. Most
 importantly, MinIO is designed to scale out horizontally to ensure that it can
-handle the demands of large-scale applications.
+handle the demands of large-scale applications \citep{minio}.
 
 % Scalability
 With MinIO, scalability is made simple by allowing multiple types of hardware
@@ -87,7 +101,7 @@ platforms to work together in separate nodes each with their own compute and
 storage within a microservice architecture \citep{minio}. This is extremely
 attractive for customers who want to utilises their existing hardware without
 being tied down to a specific provider. This also applies for customers looking
-to migrate their data from Amazon S3 to cheaper solution without compromising on
+to migrate their data from Amazon S3 to cheaper solutions without compromising on
 the high performance, reliability and scalability of the S3 platform.
 
 % Downsides
@@ -99,14 +113,12 @@ integrating a malware detection system into MinIO without negatively impacting
 the scalability or performance such that MinIO is still an effective alternative
 to Amazon S3.
 
-% TODO Overview: Malware?
-
 \subsection{Motivation} % Why am I trying to add malware detection for object storage?
 \paragraph{}
 
-Due to the high amount of unstructured data expected to be both written and read
-to the object store, and the increasing amount of malware being produced
-\citep{sophos}, there are increased risk of encountering malicious files.
+Due to the high amount of unstructured data expected to be both written to and read
+from to the object store, and the increasing amount of malware being produced
+\citep{sophos}, there are increased risks of encountering malicious files.
 Therefore malware detection within object storage is crucial in modern cloud
 storage scenarios. Most popular off-the-shelf object storage platforms, such as
 AWS, already have integrated third-party antivirus software, such as ClamAV and
@@ -126,11 +138,11 @@ performance of the platform.
 The primary objective of this project is to integrate malware detection into
 MinIO without compromising the platform's scalability or performance. The
 solution must be able to detect malware within files uploaded to MinIO and deal
-with them accordingly. The solution must also be production-ready and offer all
-the required features for a customer to use it in a real-world scenario,
-including; the ability to configure the solution, both metric collection and
-audit logging for monitoring, and the ability for it to scale to meet the users
-demand.
+with them accordingly. The solution should also be as production-ready as
+possible and offer the required features customers desire in the real-world.
+This includes; the ability to configure the solution, provide both metric
+collection and audit logging for monitoring, and the ability for it to scale to
+meet the users demand.
 
 From a personal standpoint, this project serves as an opportunity to enhance my
 knowledge of the Go programming language and the MinIO platform. Additionally,
@@ -146,8 +158,8 @@ projects.
 
 Signature-Detection is a method used to detect malware within files. A signature
 is a string that represents a malicious file \citep{intrusion-detect}. These
-signatures come in multiple forms, including MD5 hashes to represent whole-files
-\citep{sig-detection}, byte sequences which can be matched internally or regex
+signatures come in multiple forms; including MD5 hashes, to represent whole-files
+\citep{sig-detection}, byte sequences, which can be matched internally or regex
 patterns, often written in YARA \citep{yara}, to allow for more fuzzy matching.
 If malware were to have a different signature than the one present in the virus
 database, fuzzy matchers like YARA could be used to compare more abstract
@@ -180,35 +192,64 @@ to negate the disadvantages of signature detection \citep{clamav}.
 \paragraph{}
 
 Microservices are a software development technique that structures an
-application as a collection of loosely coupled services with high cohesion. This
-allows for each service to be independently deployable into logical business
-functions providing a high level of scalability and flexibility
+application as a collection of loosely coupled services with high internal
+cohesion. This allows for each service to be independently deployable into
+logical business functions providing a high level of scalability and flexibility
 \citep{microservice}. Cloud-native applications are often built using a
-microservice to take advantage of scaling for variable demand
-\citep{microservice}. Developing a microservice architecture also comes with
+microservice architecture to take advantage of scaling for variable demand
+\citep{microservice}. Developing a microservice also comes with
 challenges that should be addressed, such as service discovery, load balancing,
 and inter-service communication \citep{microservice}.
 
-% \subsection{Kubernetes} % Kubernetes
+Microservices are often deployed using containerisation technologies,
+orchestrated by tools such as Kubernetes \citep{kubernetes}. These containers
+are housed within pods, the smallest and simplest unit in the Kubernetes object
+model that encapsulates an application's container (or group of tightly-coupled
+containers), storage resources, a unique network IP, and options that govern how
+the container(s) should run \citep{k8s-struct}.
+
+Each pod is deployed onto a node, which represents a single machine in a
+Kubernetes cluster. This node could be a physical machine in a datacenter or a
+virtual machine in a cloud environment \citep{k8s-struct}. Nodes host one
+or multiple pods and provide the runtime environments for those pods'
+containers.
+
+For larger deployments, multiple nodes are organised into a cluster, managed by
+a master node that coordinates activities across worker nodes
+\citep{k8s-struct}. This setup allows a microservice architecture to
+fully leverage the scaling and resiliency features offered by Kubernetes
+\citep{kubernetes}.
+
+Communication within and across these nodes, pods, and containers is a vital
+aspect of a microservice architecture. Internally, containers within a pod can
+communicate with each other directly, while inter-pod communication is managed
+via the Kubernetes networking model \citep{k8s-network}.
+
+Kubernetes facilitates exposure of services outside of the cluster through
+methods like NodePort, LoadBalancer, Ingress, and ExternalName, each offering
+different capabilities and trade-offs \citep{k8s-struct}. For instance,
+NodePort opens a specific port on every node, while LoadBalancer and Ingress are
+typically used in cloud environments to route incoming traffic, and ExternalName
+maps a service to a DNS name \citep{k8s-struct}.
 
 \subsection{Amazon S3 Malware Detection} % How does amazon do it?
 \paragraph{}
 
 As MinIO's largest competitor, this project draws a lot of inspiration from
-Amazon S3s integrated malware detection blog page \citep{amazon-md}. The blog
+Amazon S3's integrated malware detection article \citep{amazon-md}. The article
 explains Amazons current approach for managing malware detection within their
 service. Amazon S3 uses a combination of ClamAV and Sophos as their third-party
 scanning engines due to their out-of-the-box nature \citep{amazon-md}. Amazon then gives you the
-option to use either of these engines or both. The blog goes on to describe the
+option to use either of these engines or both. The article goes on to describe the
 three main interaction mechanisms that Amazon S3 uses to flag files for
-scanning. Firstly, an API endpoint would be provided to handle all uploads. This
+scanning. Firstly, an API endpoint is provided to handle all uploads. This
 forms a queue of uploads which are then scanned before entering the bucket.
 Next, event-driven scanning is used keep track of all regular file uploads. The
 antivirus will then scan each file after they have been written to the bucket.
 Finally, retro-driven scanning is used to scan all existing files within the
 bucket. The user then has the flexibility to define what types of files should
-be scanned including defining time windows. This blog has given some useful
-methodologies of how to keeping track of both incoming and previously scanned
+be scanned including defining time windows. This article has given some useful
+methodologies of how to keep track of both incoming and previously scanned
 files. Creating a system that can match these methods is important for offering
 a matching level of scalability and security within MinIO.
 
@@ -220,10 +261,10 @@ a matching level of scalability and security within MinIO.
 The purpose of the project specification is to guide the project towards
 achieving the goals outlined in the previous section. The specification is
 divided into three main categories; functional requirements, non-functional
-requirements, and constraints.
+requirements and constraints.
 
 The MoSCoW method is employed to prioritize the projects requirements. It is a
-prioritization technique utilized in business analysis and software development
+prioritisation technique utilised in business analysis and software development
 to establish a shared understanding among stakeholders regarding the
 significance assigned to the delivery of each requirement
 \citep{moscow-prioritization}. The acronym stands for:
@@ -251,21 +292,63 @@ priority.
 \begin{table}[H] \centering
   \begin{tabular}{|p{0.4\textwidth}|p{0.5\textwidth}|l|} \hline
     \textbf{Requirement} & \textbf{Description} & \textbf{Priority} \\ \hline
-    Provide a way of detecting the latest uploads to the object store. & Key part
-    of automating scans & Must \\ \hline Record the results of the malware
-    detection within the object store. & Some feedback from the scan must be
-    provided to the user. & Must \\ \hline Provide the ability to measure
-    various metrics. & Metric
-                      collection is very attractive for satisfying production-ready status. & Must \\
+    Provide a way of detecting the latest uploads to the object store. & Key aspect
+    of automatically dispatching scans based on upload. Must keep track of all
+                                                                         uploads
+                                                with no loss of data to ensure
+                                                                         that
+                                                                         all
+                                                                         files
+                                                                         get
+                                                                         scanned.
+                                                & Must \\ \hline Record the results of the malware
+    detection within the object store. & Must provide feedback to the user
+                                         informing them of the result from the
+                                         scan. Relevant information must be
+                                         provided such as, result and time scanned.  & Must \\ \hline Provide the ability to measure
+    key performance and analysis metrics. & Metric
+                      collection is very attractive for satisfying
+                                            production-ready status. Also vital
+                                            for viewing overall system health
+                                            and proving that no data has been lost. & Must \\
     \hline Scale alongside MinIO to ensure that it does not bottleneck the
     object store at high loads. & To handle maximum throughput, the solution
-                                 should scale alongside MinIO to ensure it is
-                                 production-ready. & Must \\ \hline Provision
-    for future expansion and ongoing maintenance &. Having the ability to build
+                                 should scale alongside MinIO. This prevents the
+                                                object store from being
+                                  bottlenecked by the solution. & Must \\ \hline Provision
+    for future expansion and ongoing maintenance. & Having the ability to build
                                                    on-top of the project will
                                                    increase the attractiveness
                                                    to users looking to migrate
                                                    from AWS. & Must \\ \hline
+    Must be cost effective and legally viable for commercial use. & As the
+                                                                    solution is
+                                                                    targeted
+                                                                    towards
+                                                                    industry
+                                                                    use, it must
+                                                                    only use
+                                                                    software
+                                                                    that
+                                                                    allows it to
+                                                                    be used in
+                                                                    production.
+                                                                    This include
+                                                                    compliance
+                                                                    with
+                                                                    licenses and
+                                                                    regulations,
+                                                                    cost-effective
+                                                                    software and
+                                                                    redundancy
+                                                                    if an
+                                                                    external
+                                                                    software
+                                                                    were to
+                                                                    become
+                                                                    unusable. &
+                                                                                Must
+                                                                                \\ \hline
     \hline
 
     % SHOULD
@@ -279,8 +362,8 @@ priority.
     Add more complex metrics - Histogram, Gauges, etc. & Additional metrics are
                                                         more beneficial in a production environment but unnecessary for size of project
                                                         scope. & Should \\ \hline \hline Provide the choice of multiple antivirus
-    engines & not necessary for the proof of concept as it requires too much time. &
-                                                                                     Could \\ \hline Provide a warning when under ``delete'' cleanup policy. & not
+    engines & Not necessary for the proof of concept as it requires too much time. &
+                                                                                     Could \\ \hline Provide a warning when under ``delete'' cleanup policy. & Not
                                                                                                                                                               necessary for the proof-of-concept as it requires too much time. & Could \\
     \hline Automatically setup bucket notifications to be sent to the event queue. & Can be completed
                                                                manually with instructions instead. Removes customisability from the user if
@@ -289,15 +372,15 @@ priority.
                                          operations could fail when MinIO is not run with admin permissions. & Could \\
     \hline \hline
 
-    % WONT
+    % WON'T
     Prevent the downloading of files if flagged as infected. & Is
-                                                              covered by cleanup policies. Would also require GUI changes. & Wont \\ \hline
+                                                              covered by cleanup policies. Would also require GUI changes. & Won't \\ \hline
     Protection from ``inside man'' attacks. & The system will be maintained by an
                                              admin. The admin could attempt to compromise the system. Protection against this
-                                             is significantly harder without reducing extensibility. & Wont \\ \hline Provide
+                                             is significantly harder without reducing extensibility. & Won't \\ \hline Provide
     multiple types of scanners e.g. hash or server based AV scanner. & These would
                                                                       have different workloads and requirements. Not achievable in project scope. &
-                                                                                                                                                    Wont \\ \hline
+                                                                                                                                                    Won't \\ \hline
   \end{tabular}
   \caption{Functional Requirements}
   \label{tab:functional-reqs}
@@ -317,9 +400,9 @@ priority.
             scan time. & Must \\ \hline
     Scalability & The solution must scale to meet the demand of the incoming
                   requests. This can be done with scaling up, across or both.  & Must \\ \hline
-    Availability & Over a long period of time, the solution must be able to handle all requests. This can be measured by comparing the number of requests made to the number of requests completed over a large time frame & Must \\ \hline
-    Reliability & 100\% of the files uploaded to MinIO must go through the scanning process. The recorded metrics can be used to compare MinIO uploads with the number of objects scanned. It is worth noting that checking the clean and infected results add to the total sum of scanned objects & Must \\ \hline
-    Capacity & The solution should be able to handle the maximum number of simultaneous requests that MinIO can handle. This can be measured by monitoring the amount of cache used by the solution under load & Should \\ \hline
+    Availability & Over a long period of time, the solution must be able to handle all requests. This can be measured by comparing the number of requests made to the number of requests completed over a large time frame. & Must \\ \hline
+    Reliability & 100\% of the files uploaded to MinIO must go through the scanning process. The recorded metrics can be used to compare MinIO uploads with the number of objects scanned. It is worth noting that checking the clean and infected results add to the total sum of scanned objects. & Must \\ \hline
+    Capacity & The solution should be able to handle the maximum number of simultaneous requests that MinIO can handle. This can be measured by monitoring the amount of cache used by the solution under load. & Should \\ \hline
     Usability & Future additions, maintenance, and debugging should be as simple
                 as possible. This requirement is more subjective and therefore
                 an explanation of how this has been achieved will be discussed
@@ -331,7 +414,7 @@ priority.
                is kept within the Kubernetes deployment and all external
                interaction is handled by MinIO's internal authentication. & Could \\ \hline
     Privacy & The solution is not directly responsible for following privacy
-              laws and regulations, such as the DPA \citep{dpa}. & Wont \\ \hline
+              laws and regulations, such as the DPA \citep{dpa}. & Won't \\ \hline
   \end{tabular}
   \caption{Non-Functional Requirements}
   \label{tab:non_functional_requirements}
@@ -342,7 +425,7 @@ priority.
 
 The primary constraint for this project is the strict 12-week timeline, which
 significantly restricts the project scope. To overcome this constraint, careful
-prioritization of features and efficient time management for their
+prioritisation of features and efficient time management for their
 implementation is crucial.
 
 Another constraint is the requirement that all external software used must be
@@ -354,7 +437,7 @@ Lastly, my personal knowledge and experience pose constraints on the project.
 The learning curve for new technologies may extend the average time needed to
 achieve milestones. Moreover, potential errors could result in unforeseen
 delays. As a result, when selecting technologies, factors such as ease of use,
-documentation, and community support should be considered to minimize the impact
+documentation, and community support should be considered to minimise the impact
 of these constraints.
 
 \section{Architecture}
@@ -364,8 +447,8 @@ Choosing the correct architecture for the project is critical for ensuring that
 the solution is scalable, performant and maintainable. Given the specification
 above, various potential architectures can be created and evaluated based my own
 thoughts and from reading the background material. The best candidate design
-will then be chosen based on which candidate design satisfies the most
-requirement with as little compromises as possible. Thought will also be given
+will then be chosen based on which design satisfies the most
+requirements with as little compromise as possible. Thought will also be given
 to which architecture fits within the constraints of the project.
 
 \subsubsection*{Project Naming}
@@ -384,7 +467,7 @@ The first candidate design makes use of the performance benefits of MinIO by
 allowing puts to be initially written to the bucket without being scanned. The
 design then uses a event queue compatible with MinIO to keep track of all the
 files that have been uploaded. The queue is then used to trigger a scan of the
-file once an antivirus is available. The candidate design is shown in figure
+file once an antivirus engine is available. The candidate design is shown in Figure
 \ref{fig:postWriteArch}.
 
 \begin{wrapfigure}{r}{0.45\textwidth}
@@ -395,7 +478,7 @@ file once an antivirus is available. The candidate design is shown in figure
 
 This design has many benefits over other potential implementations. Firstly, it
 uses the storage provided by MinIO to store all incoming files without having to
-manage a separate storage solution. This removes a lot of complexity from the
+manage a large temporary storage. This removes complexity from the
 solution by not having to account for a number of failure conditions that could
 occur with a high availability, production ready storage solution. For example,
 the solution would not be responsible for handling partial writes, loss of data,
@@ -408,9 +491,9 @@ MinIO. This again removes responsibility from the solution by differing the
 scalability and reliability requirements to the event queue and MinIO.
 
 Lastly, having Aegis dispatch the files to a scalable number of antivirus
-scanners allows the solution to scale to meet the demands of the system. This
+engines allows the solution to scale to meet the demands of the system. This
 meets a key requirement as the solution is expected to have the capacity for a
-large number of operations. This method does require the use of a load balancer
+large number of operations. This method require the use of a load balancer
 to effectively distribute the load across the available antivirus scanners.
 
 The candidate design also has a number of drawbacks. Firstly, the design still
@@ -423,7 +506,7 @@ asynchronously. In addition, the cache needs to be large enough to ensure that
 the system does not become overwhelmed by the number of objects being scanned as
 the system scales. This is a minor issue as store capacity is cheap and the
 provisioning of the cache easy to scale up. Additionally, a higher priority can
-be given to scaling up and out antivirus scanners to ensure that the smallest
+be given to scaling up and out antivirus engines to ensure that the smallest
 number of files are being cached, while bring scanned, at any point.
 
 The second drawback is that, for each event, Aegis makes a get request for the
@@ -437,29 +520,28 @@ handle twice as many requests with the performance loss being noticed mainly on
 more distributed storage topologies.
 
 Thirdly, the candidate design only allows for a single Aegis instance to
-dispatch all incoming objects to available scanners. This is a potential
-bottleneck for the system as this instance could become overwhelmed by the
-number of requests it is receiving. This is a minor issue as the dispatching of
-objects to scanners is not as performance intensive as other areas of the
-solution, such as the actual scanning, and therefore it is not expected to be a
-major bottleneck.
+dispatch all incoming objects to available scanners and antivirus engines. This
+is a potential bottleneck for the system as this instance could become
+overwhelmed by the number of requests it is receiving. This is a minor issue as
+the dispatching of objects to scanners is not as performance intensive as other
+areas of the solution, such as the actual scanning, and therefore it is not
+expected to be a major bottleneck.
 
 Lastly, any object uploaded to the store will have a certain period of time
 where it remains unchecked. In this time, the user could potentially download an
 unscanned object or the object could cause harm to the store before it is
-detected. Although the handling of infected objects is out of scope, in an
-actual implementation of the solution, the user could be made unable to download
-unscanned objects until they have been scanned.
+detected. Although displaying warnings when downloading unscanned or infected objects is out
+of scope, in an actual implementation of the solution, GUI changes would be
+needed to display these warnings.
 
-% TODO Candidate Design 1: AWS does this with S3 events 'standard flow'
+This design is similar to the event-driven architecture used by Amazon S3 \citep{amazon-md}.
 
 \subsection{Candidate Design 2 - Upload Queue}
 \paragraph{}
 
-% TODO Candidate Design 2: More explanation here?
 This candidate design created a wrapper around MinIO that the user interacts
 with instead of MinIO. This means that all puts go through Aegis before being
-uploaded to the object store. The candidate design is shown in figure
+uploaded to the object store. The candidate design is shown in Figure
 \ref{fig:uploadQueueArch}.
 
 \begin{wrapfigure}{r}{0.45\textwidth}
@@ -482,17 +564,15 @@ and, in a failure scenario, to handle the recovery of the system. Additionally,
 the cache provisioned must be large enough to handle the largest files at
 maximum throughput with extra room for unexpected delays. This negatively
 affects the scope of the project by requiring the solution to prioritise
-features that are already covered by MinIO.
+features that are already covered by MinIO. Because MinIO is dependent on Aegis
+to handle the puts, MinIO must wait to be passed incoming objects sequentially
+after Aegis has finished processing the previous object. Therefore, all the
+performance benefits that MinIO offers are lost to time spent scanning. This
+leads to users waiting longer when uploading files before they are available to
+download.
 
-% TODO Candidate Design 2: Cover mitigation
-
-% TODO Candidate Design 2: is this already covered?
-Because MinIO is dependent on Aegis to handle the puts, MinIO must wait to be
-passed incoming objects sequentially after Aegis has finished processing the
-previous object. This removes the potential for aggregate performance where
-
-% TODO Candidate Design 2: Talk about how AWS uses this method 'Two Bucket
-% System Flow'
+This candidate design is similar to the API endpoint approach used by Amazon S3
+\citep{amazon-md}.
 
 \subsection{Candidate Design 3 - Write Interception}
 \paragraph{}
@@ -502,10 +582,10 @@ instead of wrapping outside the MinIO service, it intercepts the writes from the
 client before objects are written to the object store. With this interception,
 Aegis can scan the object and decide whether to allow the object to be written
 to the store or to quarantine the object. The candidate design is shown in
-figure \ref{fig:writeInterceptArch}.
+Figure \ref{fig:writeInterceptArch}.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
-  \centering \includegraphics[scale=.3]{diagrams/write-intercept.png}
+  \centering \includegraphics[scale=.4]{diagrams/write-intercept.png}
   \caption{Write Interception Architecture}
   \label{fig:writeInterceptArch}
 \end{wrapfigure}
@@ -535,10 +615,10 @@ allows the scope to focus on more related features to malware scanning.
 The final candidate design distributes Aegis onto each node in the object store.
 This means that each node has a local instance of Aegis that is responsible for
 scanning objects before they are written to the store. The candidate design is
-shown in figure \ref{fig:perNodeArch}.
+shown in Figure \ref{fig:perNodeArch}.
 
 \begin{wrapfigure}{r}{0.5\textwidth}
-  \centering \includegraphics[scale=.3]{diagrams/per-node.png}
+  \centering \includegraphics[scale=.4]{diagrams/per-node.png}
   \caption{Antivirus per Node Architecture}
   \label{fig:perNodeArch}
 \end{wrapfigure}
@@ -552,12 +632,12 @@ only relies on the antivirus pod to be able to scale out on its own.
 
 Independent scaling of the antivirus pod allow for efficient usage of available
 hardware. A simple load based auto-scaler can be used to scale the number of
-pods based on the current load. This allows for the system to flexible scale
-with the demand of the system and to reduce usage of valuable resources, such as
-power. There is also the opportunity to use intelligent scaling techniques to
-predict the load on the system and prematurely scale the system to meet the
-demand. For example, to scale the number of pods depending on the time of day or
-the day of the week.
+pods based on the current load. This allows for the system to scale with the
+demand of the system or to reduce usage of valuable resources, such as power.
+There is also the opportunity to use intelligent scaling techniques to predict
+the load on the system and prematurely scale the system to meet the demand. For
+example, to scale the number of pods depending on the time of day or the day of
+the week.
 
 The major drawback of this candidate design is that it replies on the ability to
 scan whole files by only using data on a single node. In actual implementations,
@@ -565,11 +645,11 @@ MinIO makes use of erasure coding to add increased redundancy to the store
 \citep{minio-erasure}. Erasure coding splits objects into multiple parts known
 as blocks, and then calculates corresponding parity blocks. These data and
 parity blocks are then distributed among all nodes in the system allowing for
-on-the-fly data recovery even with the loss of multiple drives or nodes . This
+on-the-fly data recovery even with the loss of multiple drives or nodes. This
 means that the Aegis instance on each node only has access to the part available
 on their node and therefore will not be able to reconstruct the whole file for
-scanning. This makes this candidate design unsuitable for MinIO as it erasure
-coding is one of its key features.
+scanning. This makes this candidate design unsuitable for MinIO as erasure
+coding is one of its key data protection features.
 
 \subsection{Selected Candidate Design}
 
@@ -611,10 +691,10 @@ driven architecture (EDA), the asynchronous processing of events, being used to 
 
 Throughout the implementation, the development of the solution followed a
 waterfall approach. The project's progress was determined by milestones outlined
-in the project plan Gantt chart, which can be found in the appendix at figure
+in the project plan Gantt chart, which can be found in the appendix at Figure
 \ref{appendix:gantt}. As this is a solo project with a limited timeline, the
 waterfall methodology is a better fit than an agile methodology as agile caters
-more to larger team with longer timelines where the requirements are less
+more to larger teams with longer timelines where the requirements are less
 concrete.
 
 Before beginning to implement the solution, it was necessary to research,
@@ -635,11 +715,9 @@ MinIO website. Homebrew, a MacOS package manager, was chosen as it is the
 easiest to install and update. The MinIO documentation was then used to create a
 local instance of MinIO accessible through the web client
 at \url{http://localhost:9000}. This allowed for the creation of buckets,
-uploading objects to the store, and familiarization with MinIO's features. An
-image of the MinIO console is available in the appendix at figure
+uploading objects to the store, and familiarisation with MinIO's features. An
+image of the MinIO console is available in the appendix at Figure
 \ref{appendix:minio-console}.
-
-% TODO Object Store: Include image
 
 MinIO has integrated the ability to send notifications to event queues depending
 on the operation performed on the store. This makes it quick and easy to set up
@@ -650,7 +728,7 @@ Webhook, Redis, PostgreSQL, and many more.
 \subsubsection*{Event Queue}
 \paragraph{}
 
-Any event queue is needed to store the incoming events produced from MinIO
+An event queue is needed to store the incoming events produced from MinIO
 whenever a put event is triggered. The event queue must be able to handle a high
 throughput of events and be able to scale out to meet the demand of the system
 \citep{event-driven-arch}.
@@ -667,7 +745,7 @@ be easier to implement and not overuse resources when it has a simple use case.
 Kafka has a dependency on Zookeeper, which is a distributed coordination service
 \citep{event-driven-arch}. Zookeeper must be installed as a separate service but
 is available from the same sources as Kafka. Kafka can be run in Kafka Raft mode
-(KRaft), which will eventually replace Zookeeper, but as of writing KRaft has
+(KRaft), which will eventually replace Zookeeper, but as of writing KRaft, has
 not been fully adopted yet \citep{kafka-raft}.
 
 With Kafka and Zookeeper set up, the Kafka command line interface (CLI) was used
@@ -676,7 +754,7 @@ to configure MinIO to send all put notifications to the Kafka topic. The Kafka
 CLI was used to read messages from the topic and see the messages sent by MinIO.
 This demonstrated that the event queue is working and that MinIO is sending
 messages to it whenever a put operation is performed. An example Kafka message
-is available in the appendix in listing \ref{appendix:kafka-notif}.
+is available in the appendix under listing \ref{appendix:kafka-notif}.
 
 \subsubsection*{Antivirus}
 \paragraph{}
@@ -689,9 +767,9 @@ be free or as inexpensive as possible to make it viable for commercial use. This
 narrows down the available options to a few contenders.
 
 Sophos is a popular antivirus that is used by many businesses and is available
-for free for personal use. However, has some major downsides. It is both paid
-for commercial use and uses more naive signature detection techniques as stated
-in \citep{sophos}. This makes it less suitable for this project.
+for free for personal use. However, it has some major downsides. It is more
+costly for commercial use than ClamAV and uses more naive signature detection techniques as
+stated in \citep{sophos}. This makes it less suitable for this project.
 
 ClamAV, on the other hand, is completely free and open-source. It comes with a
 scalable and multi-threaded daemon that can be accessed via CLI for
@@ -787,14 +865,13 @@ for the system's ongoing maintenance.
 \paragraph{}
 
 Now all of the dependencies have been downloaded, initialised and configured,
-the Aegis Go module can be created. A module is a collection of packages
-
-The most common language to use for microservice based projects is GoLang. Go is
-a compiled language that is statically typed and high concurrency support. This
-makes it a perfect fit for this project to ensure that the system is as
-performant as possible. MinIO is also written in Go should allow for easier
-integration. Go has certain standards and guidelines for clean architecture that
-should be followed to ensure high usability and efficiency.
+the Aegis Go module can be created. The most common language to use for
+microservice based projects is GoLang. Go is a compiled language that is
+statically typed and high concurrency support. This makes it a perfect fit for
+this project to ensure that the system is as performant as possible. MinIO is
+also written in Go should allow for easier integration. Go has certain standards
+and guidelines for clean architecture that should be followed to ensure high
+usability and efficiency.
 
 Go introduces some specific language that are commonly used during the project \citep{effective-go}.
 A list of common terms and their definitions are available in table
@@ -814,11 +891,11 @@ A list of common terms and their definitions are available in table
     \hline
     Goroutine & Lightweight thread managed by Go runtime, allowing concurrent execution of functions without the overhead of managing traditional threads. \\
     \hline
-    Channel   & Communication mechanism between goroutines, allowing them to synchronize and share data, providing a way to safely pass data between them. \\
+    Channel   & Communication mechanism between goroutines, allowing them to synchronise and share data, providing a way to safely pass data between them. \\
     \hline
     Struct    & Composite data type for creating custom structures composed of different fields, useful for grouping related data together. \\
     \hline
-    Package   & Collection of related Go source files organized under a specific namespace, allowing code organization, reuse, and dependency management. \\
+    Package   & Collection of related Go source files organised under a specific namespace, allowing code organisation, reuse, and dependency management. \\
     \hline
     Module    & Collection of related Go packages, providing versioning and dependency management, simplifying the process of building and sharing Go code. \\
     \hline
@@ -869,9 +946,9 @@ classes but instead uses structs which can be used to achieve the same effect.
 Sequence diagrams are also valuable for understanding the timeline of the system
 during the execution of a workflow \citep{uml-diagrams}. Flow diagrams are
 useful for visualising the flow of processes and decisions during a workflow.
-This class diagram is shown in the appendix at figure
+This class diagram is shown in the appendix at Figure
 \ref{appendix:class-diagram} along side with a both the sequence and flow
-diagram at figures \ref{appendix:general-sequence} and
+diagram at Figures \ref{appendix:general-sequence} and
 \ref{appendix:flow-diagram} respectively.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -889,7 +966,7 @@ to ensure that the same version is used across all environments. Now go commands
 can be used to install go dependencies and then download them to a local vendor
 folder for use in building. Building the project is also done with the go CLI.
 All binaries are stored within the build folder. The initial project structure
-is shown by the figure \ref{fig:file-struct}.
+is shown by the Figure \ref{fig:file-struct}.
 
 \subsubsection*{Version Control}
 \paragraph{}
@@ -897,7 +974,7 @@ is shown by the figure \ref{fig:file-struct}.
 Considering the size of this project, version control is necessary to ensure
 maintainability and the availability of a backup. Git, in combination with
 GitHub, was chosen for version control due to its widespread use, familiarity,
-and cost-free nature. The Git CLI was used to initialize a new repository within
+and cost-free nature. The Git CLI was used to initialise a new repository within
 the root directory of the Go module. Additionally, a \texttt{.gitignore} file
 was created to prevent unnecessary files from being tracked by Git, such as, the
 vendor or build folder.
@@ -1010,7 +1087,7 @@ definitions like tags.
 Once the MinIO SDK is imported, a new MinIO client object is generated to
 communicate with the MinIO service. The \texttt{CreateMinio} function accepts
 essential connection parameters, such as a context, an endpoint, access and
-secret keys, and an SSL usage flag, and initializes the MinIO client using the
+secret keys, and an SSL usage flag, and initialises the MinIO client using the
 \texttt{minio.New} function. This client object is then incorporated into a
 custom \texttt{Minio} struct, along with a logger. Various methods are
 implemented for the Minio struct to execute different object storage operations:
@@ -1047,7 +1124,7 @@ application \citep{kafka-go-repo}.
 
 The package imports necessary dependencies and creates a custom
 \texttt{KafkaConsumer} struct, which embeds a \texttt{kafka.Reader} object and a
-logger. The \texttt{CreateKafkaConsumer} function initializes a new
+logger. The \texttt{CreateKafkaConsumer} function initialises a new
 \texttt{KafkaConsumer} instance by taking connection parameters such as the list
 of brokers, the topic to be consumed, a group ID, and a maximum number of bytes
 per message.
@@ -1080,7 +1157,7 @@ scan results. The ClamAV daemon can be interacted with through the command-line
 interface (CLI) using the \texttt{clamdscan} command \citep{clamav-repo}.
 
 Initially, a \texttt{ClamAVScanner} struct is created, embedding a logger. The
-\texttt{CreateClamAV} function initializes a new \texttt{ClamAVScanner}
+\texttt{CreateClamAV} function initialises a new \texttt{ClamAVScanner}
 instance. Methods for the \texttt{ClamAVScanner} struct are implemented to
 perform various file scanning operations:
 
@@ -1122,7 +1199,7 @@ containing the metrics in the Prometheus exposition format. The exposed endpoint
 is then used by the Prometheus server to collect metrics from Aegis.
 
 \begin{itemize}
-  \item \texttt{CreatePrometheusServer}: Initializes a new Prometheus exporter
+  \item \texttt{CreatePrometheusServer}: Initialises a new Prometheus exporter
         by setting up a new HTTP server with the specified endpoint and path.
         The Prometheus handler, provided by the \texttt{promhttp.Handler()}
         function from the Prometheus Go client library, is linked to the given
@@ -1142,7 +1219,7 @@ is then used by the Prometheus server to collect metrics from Aegis.
 
 The package imports necessary dependencies and creates a custom
 \texttt{PostgresqlDB} struct, which embeds a \texttt{pgxpool.Pool} object and a
-logger. The \texttt{CreatePostgresqlDB} function initializes a new
+logger. The \texttt{CreatePostgresqlDB} function initialises a new
 \texttt{PostgresqlDB} instance by taking connection parameters such as the user,
 password, endpoint, and database name. It also returns a \texttt{CloseFunc}
 function to close the connection when needed.
@@ -1177,7 +1254,12 @@ the database when the application is shutting down.
 
 \subsection{Aegis' Internal Workflow}
 \paragraph{}
-% TODO Aegis' Internal Workflow: Describe what internal means
+The internal workflow is the inner packages that make up the Aegis microservice.
+Previously, the packages created were for interacting with external services but
+now those services need to be utilised. The following packages are split up into
+logical processed for handling different parts of the workflow. A breakdown of
+these internal packages can be found in the appendix in Figures
+\ref{appendix:class-diagram}, \ref{appendix:general-sequence} and \ref{appendix:flow-diagram}.
 
 \subsubsection*{Metrics and Collectors}
 \paragraph{}
@@ -1191,9 +1273,9 @@ and graceful shutdown of Prometheus respectively.
 Each package contains a metric collector in a file named \texttt{metrics.go}.
 These collectors define the available metrics that can be collected and exported
 by the respective packages. The \texttt{promauto} library facilitates the
-creation of a global registry when the metric manager is initialized. This
+creation of a global registry when the metric manager is initialised. This
 registry is accessed by all metric collectors to record the metrics they collect
-and is also utilized by the Prometheus exporter for publishing these metrics.
+and is also utilised by the Prometheus exporter for publishing these metrics.
 
 \subsubsection*{Object}
 \paragraph{}
@@ -1340,8 +1422,6 @@ encountered during the scan, it will be sent to the provided \texttt{errChan}.
 \subsubsection*{Cleanup Policies}
 \paragraph{}
 
-% TODO Cleanup Policies: Read again
-
 As mentioned in the previous section, the \texttt{ObjectScanner} passes the
 object to the cleaner to execute the cleanup policy. The cleaner package defines
 how to react given a clean or infected result from the antivirus engines.
@@ -1353,7 +1433,7 @@ include:
   \item \texttt{Tag}: Adds a tag to the object in the object store based on the
         scan result.
   \item \texttt{Remove}: Removes the object from the object store if it is
-        deemed infected
+        deemed infected.
   \item \texttt{Quarantine}: Moves the object to a quarantine bucket if it is
         deemed infected.
 \end{itemize}
@@ -1364,12 +1444,12 @@ configuration parameters such as the cleanup policy and quarantine bucket.
 
 The \texttt{Cleanup} method is called by the \texttt{ObjectScanner} where is
 passes the object after it has been scanned. This method uses a switch
-statement, shown in figure \ref{fig:cleaner-switch}, to determine which policy
+statement, shown in Figure \ref{fig:cleaner-switch}, to determine which policy
 to implement and executes the appropriate cleanup method. If no policy is
-specified, the switch statement has a default cause of logging that it will do
-nothing, in the case that the user only wants the audit logs. However, when a
-cleanup policy is given, the corresponding cleanup method is called. Each of these
-use the object store and object store to perform the cleanup.
+specified, the switch statement has a default case. In the case that a user
+wants only the audit log, only a logger message will be provided. However, when
+a cleanup policy is given, the corresponding cleanup method is called. Each of
+these use the object store and object store to perform the cleanup.
 
 \begin{figure}[H]
 \begin{lstlisting}[language=Go]
@@ -1390,7 +1470,6 @@ use the object store and object store to perform the cleanup.
 
 \subsubsection*{Dispatcher}
 \paragraph{}
-% TODO Dispatcher: Is implement correct?
 
 The \texttt{dispatcher} package is responsible for managing the scanning of
 objects using multiple scanners concurrently. It defines a \texttt{Scanner}
@@ -1409,7 +1488,7 @@ if the channel is closed, the loop will continue to process the remaining
 objects in the channel and then exit \citep{go-channel-ranges}. This is because
 when channels are closed, no more values can be sent to them, but the values
 that have already been sent can still be received \citep{go-closing-channels}.
-This is shown in the provided dispatcher loop code in figure
+This is shown in the provided dispatcher loop code in Figure
 \ref{fig:dispatcher-loop}.
 
 \begin{figure}[H]
@@ -1461,8 +1540,8 @@ tested without running the entire program \citep{go-tiny-abstraction}. The
 encompasses Aegis' main workflow.
 
 The \texttt{run} function is divided into three distinct sections:
-Initialization and configuration, the main loop, and cleanup. The initialization
-and configuration section is responsible for initializing all the components
+Initialisation and configuration, the main loop, and cleanup. The initialisation
+and configuration section is responsible for initialising all the components
 Aegis requires and configuring them with the values provided by the
 configuration package.
 
@@ -1484,8 +1563,6 @@ configuration package.
         \texttt{scanChan}.
 \end{itemize}
 \bigskip
-
-% TODO Main: Parameter tree?
 
 % ---- Main loop -----
 
@@ -1526,7 +1603,7 @@ that the goroutines have completed processing the remaining objects in the
 \texttt{scanChan} channel. Once this process is finished, the program stops the
 Prometheus metric exporter and exits with a status code of 0, indicating a
 successful operation. To better indicate the graceful shutdown process, a
-sequence diagram is available in the appendix at figure
+sequence diagram is available in the appendix at Figure
 \ref{appendix:shutdown-sequence}.
 
 \subsection{Testing}
@@ -1547,7 +1624,7 @@ code coverage.
 
 To facilitate the process of unit testing and ensure that the focus remains on
 the functionality of the components under test, the mocking technique was
-employed using the Mockery framework. This approach allows for the isolation of
+employed using the Mockery framework \citep{mockery}. This approach allows for the isolation of
 individual components by replacing dependencies with mock implementations.
 
 \subsubsection*{Mocking}
@@ -1555,11 +1632,11 @@ individual components by replacing dependencies with mock implementations.
 
 Mocking is a technique employed in unit testing to replace dependencies that
 packages rely on for their functionality. This allows for the testing of
-individual packages in isolation, minimizing the impact of potential errors from
+individual packages in isolation, minimising the impact of potential errors from
 external sources and ensuring that tests focus solely on the functionality of
 the component being tested.
 
-A mocking framework called Mockery is utilized for this purpose. Mockery is a
+A mocking framework called Mockery is utilised for this purpose. Mockery is a
 tool that generates mocks implementing each interface within a package
 \citep{go-tools}. It offers the ability to override methods, enabling the mock
 to return a predetermined output for specific inputs. This capability can also
@@ -1576,7 +1653,7 @@ by the corresponding makefile command.
 The command \texttt{go test} is used to run tests, which outputs the results of
 all unit tests and the code coverage for the package. Code coverage is computed
 as the ratio of the number of lines of code executed to the total number of
-lines of code in the package, as illustrated in equation \ref{eq:code_coverage}.
+lines of code in the package, as illustrated in Equation \ref{eq:code_coverage}.
 Code coverage serves as a valuable metric for assessing the thoroughness of
 package testing.
 
@@ -1596,23 +1673,9 @@ and reliability of the solution.
 
 To turn the solution into a microservice, a process is required to turn Aegis
 into a self-contained business unit. This process is called containerisation and
-is achieved by packaging the application and its dependencies into a container.
-Next, a deployment can be created
-
-% TODO Kubernetes deployment: Short description
-
-deployment to a Kubernetes cluster is
-required.
-
-\subsubsection*{Docker}
-\paragraph{}
-Docker is a platform for developing, shipping, and running
-applications in containers \citep{docker}. Containers are lightweight, portable,
-and provide a consistent environment for applications, simplifying deployment
-and scaling. Docker allows developers to build and package applications and
-their dependencies into containers that can run on any system with Docker
-installed. These smaller, self-contained business units can be networked
-together to form a microservice architecture.
+is achieved by packaging the application and its dependencies into a single
+container image. This image can then be deployed to a container orchestration
+system such as Kubernetes.
 
 \subsubsection*{Kubernetes}
 \paragraph{}
@@ -1624,6 +1687,16 @@ of applications using multiple decentralised nodes controlled by internal and
 horizontal load balancers. Kubernetes supplies a CLI tool called
 \texttt{kubectl} for interacting and managing Kubernetes clusters.
 
+\subsubsection*{Docker}
+\paragraph{}
+Docker is a platform for developing, shipping, and running
+applications in containers \citep{docker}. Containers are lightweight, portable,
+and provide a consistent environment for applications, simplifying deployment
+and scaling. Docker allows developers to build and package applications and
+their dependencies into containers that can run on any system with Docker
+installed. These smaller, self-contained business units can be networked
+together to form a microservice architecture.
+
 \subsubsection*{K3d}
 \paragraph{}
 K3d is a lightweight Kubernetes distribution designed for local
@@ -1634,7 +1707,7 @@ configurations before deploying them to a production environment. K3d uses a
 configuration file called \texttt{k3d.yaml} to define the cluster's
 configuration, including creating a registry for storing Docker images, exposing
 ports, and mounting volumes \citep{k3d-conf}. The configuration file is
-available in the figure \ref{fig:expose-services}.
+available in the Figure \ref{fig:expose-services}.
 
 Registries are used to store Docker images that will be available for Kubernetes
 to use. In this case, I create a local registry using K3d which I can then later
@@ -1654,7 +1727,7 @@ building the application using the makefile command.
 The second stage is for the execution of the program. This stage downloads the
 \texttt{clamdscan} dependency, copies over the config files and the binary from
 the previous stage and then runs the application. This separation is beneficial
-because after the binary is build, the source code can be deleted which reduces
+because after the binary is built, the source code can be deleted which reduces
 the size of the image, therefore saving resource demand. Once the Docker image
 is built, it can be uploaded to the local container registry, ready for use by
 Kubernetes.
@@ -1693,9 +1766,10 @@ configuration settings for each deployment. By customising the
 \texttt{values.yaml} file, you can tailor the deployments to suit the specific
 requirements of your environment. As we have already allowed the overriding of
 variables in Aegis by using environment variables, this means that configuring
-the solution to work within Kubernetes is an easy task. In figure
-\ref{fig:override-env-vars}, you can see how these environment variables are
-overridden for Aegis and all other services.
+the solution to work within Kubernetes is an easy task. In Figure
+\ref{fig:override-env-vars}, these environment variables are overridden to
+configure Aegis, in the \texttt{env:} key and all other services in their
+corresponding fields.
 
 \begin{figure}[H]
 \begin{lstlisting}
@@ -1742,12 +1816,12 @@ corresponding service's ClusterIP and remain stable throughout the service's
 lifecycle. To enable communication between services, these DNS names can be used
 as cluster internal addresses instead of the localhost address.
 
-Utilizing DNS names instead of ClusterIPs offers several advantages, including
+Utilising DNS names instead of ClusterIPs offers several advantages, including
 the abstraction of the ClusterIP. This abstraction allows Kubernetes to change
 the ClusterIP without requiring any reconfiguration of the deployment to locate
-the updated IP. In the \texttt{env:} field of figure \ref{fig:override-env-vars}
-you can see how the new addresses are used to configure the services to communicate
-with each other.
+the updated IP. This is viewable in the \texttt{env:} field of Figure
+\ref{fig:override-env-vars} where new internal addresses are used to configure the
+services to communicate with each other within the cluster.
 
 \subsubsection*{Exposing Services}
 \paragraph{}
@@ -1756,20 +1830,28 @@ ClusterIP services are only accessible within the node, so to access the
 services outside of the cluster, say to upload files to MinIO, a different type
 of service must be used \citep{kube-svc}.
 
-NodePort services expose the service on a static port on each node. NodePort has
-ports available in the range 30000-32767. NodePort can be used with all TCP or
-UDP traffic and therefore fits the purposes of all three services that need to
-be exposed; the MinIO console, Prometheus metric server and PostgreSQL audit log
-database. The main drawback with NodePort is that each node must be accessed
-separately, which is not ideal for a multi-node production environment. However,
-this is less of an issue as the solution is only being deployed on a single
-node.
+NodePort services expose the service on a static port on every node. NodePort
+has ports available in the range 30000-32767. NodePort can be used with all TCP
+or UDP traffic and therefore fits the purposes of all three services that need
+to be exposed; the MinIO console, Prometheus metric server and PostgreSQL audit
+log database. The main drawback with NodePort is that it offers no load
+balancing customisation between nodes and by default round-robins traffic. This
+is not ideal for a multi-node production environment but is less important as
+the solution is deployed on a single node. A diagram of how NodePort
+is used can be found in Figure \ref{fig:nodeport}.
+
+\begin{figure}[H]
+  \centering \includegraphics[scale=0.5]{diagrams/nodeport.png}
+  \caption{NodePort Diagram}
+  \label{fig:nodeport}
+\end{figure}
 
 The alternative to NodePort is LoadBalancer, which uses ClusterIP and NodePort
-services in combination to access all nodes in the cluster. As this is a single
-node cluster, there is no need to create a load balancer between them, so
-NodePort is sufficient. This can be changed in the Helm chart if need in the
-future.
+services in combination to balance traffic to all nodes in the cluster.
+LoadBalancer can be configured with various algorithms to better route traffic
+based on load. As this is a single node cluster, there is no need to create a
+load balancer between them, so NodePort is sufficient. This can be changed in
+the Helm chart if need in the future.
 
 Below is the \texttt{k3d-conf.yaml} file that configures the NodePort services
 for MinIO, Prometheus and PostgreSQL.
@@ -1799,12 +1881,8 @@ for MinIO, Prometheus and PostgreSQL.
   \label{fig:expose-services}
 \end{figure}
 
-% TODO Exposing Service: Explain it specifically?
-
-% TODO Kubernetes Deployment: Diagram TODO Kubernetes Deployment: Output log
-
-In the appendix is an output logs displaying all services, pods and cronjobs
-from the command \texttt{kubectl get all} available in the figure \ref{appendix:kube-get-all}.
+In the appendix is an output log displaying all services, pods and cronjobs
+from the command \texttt{kubectl get all} available in the Listing \ref{appendix:kube-get-all}.
 
 \subsubsection*{Connecting Prometheus Metrics}
 % When prometheus needs to connect to aegis How to connect to postgresql and
@@ -1812,7 +1890,7 @@ from the command \texttt{kubectl get all} available in the figure \ref{appendix:
 \paragraph{}
 The Prometheus deployment must be configured to know where to scrape metrics
 from. This can be done by adding annotations to the deployment, which can be
-seen in figure \ref{fig:prometheus-annotations}. These annotations tell the
+seen in Figure \ref{fig:prometheus-annotations}. These annotations tell the
 Prometheus deployment to scrape metrics from the Aegis service on the port 2112.
 
 \begin{figure}[H]
@@ -1837,7 +1915,7 @@ On deployment, the Helm chart deployment of ClamAV automatically creates a
 cronjob that downloads the latest version of the virus database. Initially, this
 cronjob downloads the entire database but on subsequent runs only downloads the
 updates in daily releases. Upon completion, ClamAV has access to a total of
-almost 8.7 million virus signatures shown in figure \ref{fig:clamav-db}.
+almost 8.7 million virus signatures shown in Figure \ref{fig:clamav-db}.
 Alongside the number of signatures, the figure also shows the active
 configuration of ClamAV, namely the maximum file size, the recursion level and
 the file types that are scanned.
@@ -1854,11 +1932,13 @@ IP could be rate-limited again.
   \begin{lstlisting}
     Starting Freshclamd
     Starting ClamAV
-    Socket for clamd not found yet, retrying (0/1800) ...ClamAV update process started at Wed May 10 11:43:49 2023
-    daily.cvd database is up-to-date (version: 26902, sigs: 2034320, f-level: 90, builder: raynman)
-    main.cvd database is up-to-date (version: 62, sigs: 6647427, f-level: 90, builder: sigmgr)
-    bytecode.cvd database is up-to-date (version: 334, sigs: 91, f-level: 90, builder: anvilleg)
-    Socket for clamd not found yet, retrying (132/1800) ...Wed May 10 11:46:04 2023 -> Limits: Global time limit set to 120000 milliseconds.
+    Socket for clamd not found yet, retrying (0/1800) ...
+    ClamAV update process started at Wed May 10 11:43:49 2023
+    daily.cvd database is up-to-date (version: 26902, sigs: 2034320, builder: raynman)
+    main.cvd database is up-to-date (version: 62, sigs: 6647427, builder: sigmgr)
+    bytecode.cvd database is up-to-date (version: 334, sigs: 91, builder: anvilleg)
+    Socket for clamd not found yet, retrying (132/1800) ...
+    Wed May 10 11:46:04 2023 -> Limits: Global time limit set to 120000 milliseconds.
     Wed May 10 11:46:04 2023 -> Limits: Global size limit set to 419430400 bytes.
     Wed May 10 11:46:04 2023 -> Limits: File size limit set to 104857600 bytes.
     Wed May 10 11:46:04 2023 -> Limits: Recursion level limit set to 17.
@@ -1904,24 +1984,24 @@ standard deployment of the solution.
   \item Connect to the MinIO web console at \texttt{localhost:9000}. You can
         perform all standard actions here, such as creating buckets and
         uploading files.
-  \item Add the event queue configuration to MinIO. Pictured in figure
+  \item Add the event queue configuration to MinIO, pictured in the appendix in Figure
         \ref{appendix:minio-event-queue}. You will need to restart the MinIO
         server for the change to update.
   \item Configure a bucket to send put events to the event queue. Pictured in
-        the appendix at figure \ref{appendix:minio-bucket-event}.
+        the appendix at Figure \ref{appendix:minio-bucket-event}.
   \item Upload a file to the bucket. This will trigger Aegis to download and
-        scan the file. The logs can be viewed in the appendix at figure
+        scan the file. The logs can be viewed in the appendix in Listing
         \ref{appendix:aegis-logs}.
   \item Depending on the cleanup policy, Aegis will perform the appropriate
         cleanup action which can be seen on the web console.
   \item In addition, you can connect to the Prometheus web console at
         \texttt{localhost:9090}. You can view the metrics collected by
-        Prometheus here. Example is available in the appendix at figure
+        Prometheus here. Example is available in the appendix in Listing
         \ref{appendix:prometheus-metrics}. To use the metrics you can also
         connect Grafana to the same address.
   \item Connect to the PostgreSQL database at \texttt{localhost:5432} using the
         \texttt{psql --localhost} command. You can view an example of the audit
-        log in the appendix at figure \ref{appendix:audit-log}.
+        log in the appendix in Listing \ref{appendix:audit-log}.
 \end{enumerate}
 
 \subsection{Benefits of Metric Collection}
@@ -1929,7 +2009,7 @@ standard deployment of the solution.
 Because of the metrics collection we implemented earlier, getting values such as
 files scanned and total infected files already present. Using the exposed
 Prometheus, Grafana can be used to visualise these metrics. These graphs can
-help us evaluate the performance of the solution. In figure \ref{fig:grafana} a
+help us evaluate the performance of the solution. In Figure \ref{fig:grafana} a
 dashboard has been created to visualise the use of the solution. Its worth
 noting that for a successful solution, the total events messages, total scanned
 objects and total cleaned objects must all be equal. This ensures that all
@@ -1974,13 +2054,13 @@ core CPU giving 10GB and 8 cores to Docker.
 This metric is less important as it is only performed once. However, it is still
 valuable for our analysis as it represents the time taken to deploy the a single
 node in a cluster. This is measured from the time the \texttt{make create-node}
-to first being able to perform a scan in table \ref{tab:setup_timings}. This
+to first being able to perform a scan in Table \ref{tab:setup_timings}. This
 includes the time taken to download the virus signature database.
 
 \begin{table}[H] \centering
   \begin{tabular}{|l|l|}
     \hline
-    \textbf{Setup Task}             & \textbf{Time} \\ \hline
+    \textbf{Setup Task}             & \textbf{Time mm:ss} \\ \hline
     Cluster started                 & 00:00         \\ \hline
     Cluster building complete       & 00:20         \\ \hline
     Docker Image pulled             & 00:27         \\ \hline
@@ -2006,10 +2086,10 @@ to come online but enters into CrashLoopBackOff until all other pods are online.
 Over a longer period of time, the scan throughput can be measured. This could be
 interpreted as two separate metrics, the total number of files scanned and the
 total size of files scanned. Both are valuable metrics to measure to access the
-sustained performance of the solution. Calculating throughput in equation
+sustained performance of the solution. Calculating throughput in Equation
 \ref{eq:throughput} can be done by uploading a known number of files with a
 known size and measuring the time taken to complete the scan. The results from
-scanning a two folders, containing various media types, will be added in the table
+scanning a two folders, containing various media types, will be added in the Table
 \ref{tab:scan_throughput} with average throughput calculated.
 
 \begin{equation}
@@ -2039,29 +2119,36 @@ different file sizes and types therefore is not a good representation of the
 performance.
 
 \subsubsection*{Scan Speed}
+\paragraph{}
 Unfortunately the intended inclusion of a scan time metric through Prometheus
 became out of scope. However, calculating the scan speed can still be done using
 the output logs from Aegis. This can be done as scan time is logged for each
-file scanned, it is just not collected. Using a grep and awk in figure \ref{fig:scan-time-commands}, all scan times
-can be extracted and averaged
+file scanned, it is just not collected. Using a grep and awk in Figure \ref{fig:scan-time-commands}, all scan times
+can be extracted and averaged to give the average scan time.
 
 \begin{figure}[H]
   \begin{lstlisting}
-    kubectl logs aegis-d564b7ddb-fvvmj | grep -o 'Time: [0-9]*.[0-9]* sec' | awk '{ for (i=1; i<=NF; i++) { sum+=$i; count++ } } END { print sum/count }'
+    kubectl logs aegis-d564b7ddb-fvvmj | \
+    grep -o 'Time: [0-9]*.[0-9]* sec' | \
+    awk '{ for (i=1; i<=NF; i++) { sum+=$i; count++ } } END { print sum/count }'
     79.4085
   \end{lstlisting}
     \caption{Calculate Scan Time Commands}
     \label{fig:scan-time-commands}
 \end{figure}
 
-The result of 79.4085 seconds is a very high amount of time. This result was from a system under maximum load on restricted hardware. If the same commands are run on a system not under constant load the results change dramatically. For a single scan, time taken is at 0.39 seconds. This shows that very quickly the antivirus engine gets swamped by a queue of files to scan.
+The result of 79.4085 seconds is a very long amount of time. This result was
+from a system under maximum load on restricted hardware. If the same commands
+are run on a system not under constant load the results change dramatically. For
+a single scan, time taken is at 0.39 seconds. This shows that very quickly the
+antivirus engine gets overwelmed by a queue of files to scan.
 
 \subsubsection*{Scan Lag}
 \paragraph{}
-Scan lag is the time taken between uploading and the scan completing. This can
-be visualise by measuring the time taken between receiving a put event and to
-performing the scan on a folder. Grafana can be used to generate this graph as shown in the
-figure \ref{fig:scan-lag}. Note this folder is different to the one used in the
+Scan lag is the time taken between uploading file and its scan completing. This can
+be visualised by measuring the time taken between receiving a put event and
+the scan completing. Grafana can be used to generate this graph as shown in the
+Figure \ref{fig:scan-lag}. Note the folder used is different to the one used in the
 previous example.
 
 \begin{figure}[H]
@@ -2077,8 +2164,8 @@ This is the time difference between Aegis receiving a put event and the scan
 completing. The yellow area is the current scan progress. Overtime, the yellow
 area matched the orange area as all the scan requests are processed. With the
 process starting at 13:01:30, the peak of the orange area is at 13:03:45 which
-is only 2:15 after the first upload. The peak yellow area is at 13:10:45 showing
-that it took a total of 9:15 to complete the scan of the whole folder, a
+is only 2m:15s after the first upload. The peak yellow area is at 13:10:45 showing
+that it took a total of 9m:15s to complete the scan of the whole folder, a
 difference of 7 minutes scan lag time. Its worth noting that the processing of
 the scan requests is linear meaning that the process is never being bottlenecked
 at any point. This backs up the previous assumption that the evaluation is
@@ -2092,7 +2179,7 @@ lag will increase exponentially.
 \subsubsection*{Scan Reliability}
 \paragraph{}
 Throughout the performance evaluation above, Grafana has displayed a running
-total of all scan requests, scanned files and any error occurred in figure
+total of all scan requests, scanned files and any error occurred in Figure
 \ref{fig:scan-reliability}. This is a good indicator of the reliability of the
 solution as no scans are being missed and no errors have been recorded.
 
@@ -2107,7 +2194,7 @@ solution as no scans are being missed and no errors have been recorded.
 Scan accuracy is redundant to measure as the solution only uses ClamAV to scan
 files. If higher accuracy than what ClamAV provides is required, adding more
 antivirus engines is possible with the aggregate scan results being determined
-by the union of positive scan results \citep{av-comparison}. This is shown in the figure
+by the union of positive scan results \citep{av-comparison}. This is shown in Figure
 \ref{scan-union}.
 
 \begin{figure}[H]
@@ -2120,12 +2207,12 @@ by the union of positive scan results \citep{av-comparison}. This is shown in th
 \subsubsection*{Shutdown Reliability}
 \paragraph{}
 During an unexpected error or graceful shutdown process, reliably stopping the
-scanning process is essential to ensure that no files are left in a state of
-limbo. To evaluate this, a set of scans will be requested with known malicious
-files. These files should be removed under the corresponding cleanup policy and
+scanning process is essential to ensure that no files are left unprocessed. To
+evaluate this, a set of scans will be requested with known malicious files.
+These files should be removed under the corresponding cleanup policy and
 therefore no files should be left in the object store. Mid-scan, an interrupt
 signal will be given to Aegis causing it to enter graceful shutdown. The results
-of running the test are available in the appendix at
+of running the test are available in the appendix in Listing
 \ref{appendix:shutdown-logs}.
 
 As expected, zero files are left in the object store after Aegis had restarted
@@ -2134,6 +2221,9 @@ the execution of the solution if any error conditions would occur.
 
 \subsection{Comparing Functional Requirements}
 \paragraph{}
+By comparing the functional requirements defined at the beginning of the report,
+a conclusion can be made on whether the solution has met the requirements. Each
+requirement is evaluated in Table \ref{tab:functional-reqs-evaluation}.
 
 \begin{table}[H]
   \centering
@@ -2157,7 +2247,7 @@ the execution of the solution if any error conditions would occur.
     policies, remove, tag or quarantine. This requirement has been met and over
                                                                           achieved
     as there are multiple options for the user to choose from. \\ \hline
-    Provide the ability to measure various metrics. & As shown by
+    Provide the ability to measure key performance and analytic metrics. & As shown by
                                                      \ref{fig:grafana}, various
                                                      metrics have been collected
     throughout the Aegis' lifetime. These have also been consumed and
@@ -2191,7 +2281,30 @@ the execution of the solution if any error conditions would occur.
                                                              of scanning
                                                              workflows and
                                                              multiple antivirus engines.
-                                                              \\ \hline \hline
+    \\ \hline
+    Must be cost effective and legally viable for commercial use. & This
+                                                                    requirement
+                                                                    has been met
+                                                                    as all
+                                                                    external
+                                                                    software
+                                                                    used is
+                                                                    open-source
+                                                                    and freely
+                                                                    available.
+                                                                    If in
+                                                                    production
+                                                                    use,
+                                                                    additional
+                                                                    antivirus
+                                                                    engines are
+                                                                    used then
+                                                                    paid
+                                                                    software can
+                                                                    be included.
+    \\ \hline
+
+    \hline
 
     Have a high level of customisability to allow for different use cases. &
                                                                              This
@@ -2291,11 +2404,13 @@ the execution of the solution if any error conditions would occur.
     this in the future has been put into place, if required.  \\ \hline
   \end{tabular}
   \caption{Functional Requirements with Evaluation}
-  \label{tab:functional_reqs_evaluation}
+  \label{tab:functional-reqs-evaluation}
 \end{table}
 
 \subsection{Comparing Non-Functional Requirements}
 \paragraph{}
+Additionally, the non-functional requirements have been evaluated in the table
+\ref{tab:non-functional-reqs-evaluation}.
 
 \begin{table}[H]
   \centering
@@ -2313,7 +2428,7 @@ the execution of the solution if any error conditions would occur.
     Scalability & The solution lacks to achieve this requirement. Provisions for
           scaling out have been added but the scope constraints prevented them
                   from being fully implemented. This negatively affects the
-                  project as this requirement was a priority. & \\ \hline
+                  project as this requirement was a priority. \\ \hline
     Availability & Scan reliability has shown that throughout benchmarking the
                    cluster has not become unavailable. While object store
                    availability is the responsibility of MinIO, the stability of
@@ -2339,8 +2454,46 @@ the execution of the solution if any error conditions would occur.
               downloads, does not have any outside access. \\ \hline
   \end{tabular}
   \caption{Non-Functional Requirements with Evaluation}
-  \label{tab:non_functional_reqs_evaluation}
+  \label{tab:non-functional-reqs-evaluation}
 \end{table}
+
+\subsection{Project Aims Evaluation}
+\paragraph{}
+
+Upon reviewing the functional and non-functional requirements, it can be said
+that the project aim of "implementing malware detection into MinIO without
+compromising the platform's scalability or performance" has been achieved to
+some extent. While a malware detection component has been successfully
+integrated, certain compromises were required to remain within the project
+scope. The current solution does not dynamically scale the antivirus engines in
+response to increased demand on the object store, resulting in substantial scan
+latency that could potentially affect user experience.
+
+Despite this, the developed solution serves as a solid foundation for a
+production-grade malware detection system for MinIO, boasting high availability,
+reliability, and security. With further time and resource investment, it has the
+potential to scale efficiently alongside MinIO without compromising performance.
+
+Through the course of this project, I have made significant strides towards
+achieving my personal aims. Specifically, I have successfully deepened my
+understanding of the Go programming language and the MinIO platform. Creating a
+complete and high quality Go application has taught me the value of effective
+design architecture to maximise cohesion and minimise coupling. At a few points
+in the project, refactoring was required which could have been avoided with
+a more informed planning phase.
+
+Furthermore, I have increased my experience in designing and implementing
+production-ready solutions within a microservice environment. Through the
+practical application of microservice design principles and deployment
+strategies, I have gained insights into the complexities and rewards of this
+architectural style.
+
+Yet, perfecting the management of time, scope, and resources in large-scale
+projects remains a field needing more development. The wide scope of this
+project introduced considerable challenges, such as juggling competing
+priorities and resolving unforeseen issues. Even with these challenges, it
+illuminated the vital importance of effective project management skills and has
+motivated me to target continued growth in this area.
 
 \subsection{Testing Evaluation}
 \paragraph{}
@@ -2350,8 +2503,8 @@ different packages. The overall test coverage for Aegis is a good indicator of
 the effectiveness of the tests in place. This also supports the reliability of
 the solution as errors should be caught before deployment.
 
-The current test coverage for Aegis is 85\%. Supplied in the appendix in the
-output from performing the tests at figure \ref{appendix:go-tests}.
+The average test coverage for Aegis is 64\%. Supplied in the appendix in the
+output from performing the tests in Listing \ref{appendix:go-tests}.
 
 For future development, achieving 100\% coverage over all packages is a worth
 while goal, especially to claim production-ready status. This will ensure that
@@ -2362,16 +2515,13 @@ tests before implementing the actual code. By adopting TDD, testing becomes the
 priority, and each package's level of quality and encapsulation will be
 constantly assessed, therefore catching more errors before deployment.
 
-\subsection{Project Aims Evaluation}
-\paragraph{}
-Given the analysis of the functional and non-functional requirements...
 
 \section{Product Issues / Future work} % What you would do next time
 \paragraph{}
 
 Although the solution is working, it is not without its limitations. From the
 evaluation, two categories of issues have been identified. Firstly, the hard
-constraint of the project deadline has meant that some features have no been
+constraint of the project deadline has meant that some features have not been
 implemented or compromises have had to be made. This will have negatively
 affected the quality of the solution These issues are listed below.
 
@@ -2395,11 +2545,12 @@ affected the quality of the solution These issues are listed below.
         to solve as it is possible to delete a folder while another file is
         being downloaded to it. The impact of retaining all folders is small as
         an empty folder uses minimal storage space but over time writing to the
-        store could slow down. One possible solution is to have all files in a
-        bucket in a single folder. This could lead to naming conflicts which a
-        UUID could solve \citep{UUID}. Another solution could be having a
-        retention policy on each folder which would delete the folder after a
-        given time or under a given condition.
+        store could slow down. One possible solution is to store all files in a
+        single folder. This could lead to naming conflicts which a UUID could
+        solve \citep{UUID}. Another solution could be having a retention policy
+        on each folder which would delete the folder after a given time or under
+        a given condition.
+  \item
 \end{itemize}
 
 Secondly, new opportunities have identified themselves during the development of
@@ -2430,28 +2581,68 @@ area. Below is a list of the issues identified.
   \item Have a selection of ready-to-go antivirus engines that the user can
         choose from to improve overall scanning accuracy \citep{av-comparison}.
   \item Put tagging messages are ignored by the event queue. This could
-        potentially cause a security leak where a change is tags are not
+        potentially cause a security issue where a change in tags are not
         scanned. The risk of this is minor as only a user with access to the
-        system can modify the tag which could class as an inside man attack
-        which was not in the scope of the project but still should be fixed in
-        the future.
+        system can modify the tag which could be classed as an inside man attack
+        which was not in the scope of the project.
+  \item Queue deduplication could be used to ensure that the same file is not
+        scanned multiple times while in the event queue. This would improve the
+        performance of deployments that are receiving a large number of puts
+        involving the same file.
 \end{itemize}
-
-% Security Scalability Integrated logging and audit logging Testing coverage
-% Performance -> Rust etc Deployment -> Kubernetes expand the deployment to
-% multi node Log aggregation -> Splunk
-% ScanTime metrics -> Prometheus
 
 \section{Conclusions}
 \subsection{}
 
-\section{Reflection on Learning} % Fuck knows
+As this project concludes, further work remains to ensure the solution aligns
+with the standards delineated in the project specification. Despite making
+considerable progress, the current solution does impact the scalability and
+performance of the MinIO object store. However, it's important to recognize the
+significant accomplishments of the project; the successfully development of a
+microservice capable of scanning uploaded files for malware. The Aegis service
+operates efficiently, requiring minimal cache for object scans and never acting
+as a bottleneck in the workflow.
+
+Moreover, the solution integrates numerous production-level features necessary
+for enterprise deployment. It also maintains compatibility with existing MinIO
+features, including erasure coding and object encryption. These successes affirm
+the potential of the solution, even as we acknowledge areas that need further
+development.
+
+Additionally, throughout the development process, numerous potential research avenues have
+been identified. Given more time, these could be thoroughly explored and
+capitalised upon.
+
+\section{Reflection on Learning}
 \subsection{}
 
+Throughout the course of this project, I have dramatically improved on my
+knowledge and experience. The project provided a valuable opportunity for me to
+further my understanding of the Go programming language and the MinIO platform.
+The endeavor of creating a microservice application using Go was challenging at
+points, but it served as an enriching exercise that will improve my grasp of
+effective system design and software engineering principles.
+
+Furthermore, the project has shown me the importance of various non-technical
+skills when working on large-scale developments. Particularly, project
+management skills were brought to the forefront given the broad requirements and
+restrictive scope of the project. I have recognized the crucial role of
+effective time management, clear goal-setting, and efficient resource allocation
+in ensuring the project's success. While I did encounter a few setbacks, I
+managed to adapt my approach and implement necessary changes to facilitate the
+project's progression.
+
+Despite the overall success of the project, I recognize that certain areas
+require further refinement. Notably, maintaining the scalability and performance
+of the MinIO object store while staying within scope present many issues.
+Nevertheless, these hurdles have served as invaluable learning experiences,
+offering insight into areas of potential future focus. Moving forward, I am
+eager for another opportunity to apply the skills and knowledge I've gained from
+this project to new challenges and projects.
 \section{Appendix}
 
 \begin{figure}[H]
-  \centering \includegraphics[scale=.65]{diagrams/gantt-chart.png}
+  \centering \includegraphics[scale=.67]{diagrams/gantt-chart.png}
   \caption{Timeline of Aegis' Development}
   \label{appendix:gantt}
 \end{figure}
@@ -2502,7 +2693,7 @@ label=appendix:create-table-query]{assets/create-table-query.txt}
 label=appendix:insert-query]{assets/insert-query.txt}
 
 \begin{figure}[H]
-  \centering \includegraphics[scale=0.31]{images/minio-event-queue.png}
+  \centering \includegraphics[scale=0.45]{images/minio-event-queue.png}
   \caption{Configuring MinIO to Send Events to Kafka}
   \label{appendix:minio-event-queue}
 \end{figure}
@@ -2525,9 +2716,8 @@ label=appendix:insert-query]{assets/insert-query.txt}
 \lstinputlisting[basicstyle=\tiny, language=SQL, caption={Example Audit
   Log}, label=appendix:audit-log]{assets/audit-logs.txt}
 
-% TODO Testing Evaluation: Go tests output
-% \bigskip \lstinputlisting[caption={Output of Unit Tests},
-% label=appendix:go-tests]{assets/go-tests.txt}
+\bigskip \lstinputlisting[caption={Output of Unit Tests},
+label=appendix:go-tests]{assets/test-logs.txt}
 
 \lstinputlisting[basicstyle=\tiny, caption={Output of kubectl get all},
 label=appendix:kube-get-all]{assets/kube-get-all.txt}
@@ -2535,8 +2725,6 @@ label=appendix:kube-get-all]{assets/kube-get-all.txt}
 \lstinputlisting[basicstyle=\tiny, caption={Shutdown Logs of Aegis},
 label=appendix:shutdown-logs]{assets/shutdown-logs.txt}
 \bigskip
-
-% TODO References: Check them all
 
 \bibliographystyle{cardiff} \bibliography{references}
 

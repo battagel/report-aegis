@@ -18,7 +18,7 @@
       },
       "responseElements": {
         "content-length": "0",
-        "x-amz-id-2": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "x-amz-id-2": "...",
         "x-amz-request-id": "174F5A6C715ECB50",
         "x-minio-deployment-id": "439d9d33-3cca-42ae-b778-d703cbf9bbf7",
         "x-minio-origin-endpoint": "http://192.168.1.138:9000"

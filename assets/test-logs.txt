@@ -1,0 +1,7 @@
+ok  	aegis/internal/auditlog	(cached)	coverage: 69.6% of statements
+ok  	aegis/internal/cleaner	(cached)	coverage: 62.3% of statements
+ok  	aegis/internal/dispatcher	(cached)	coverage: 73.7% of statements
+ok  	aegis/internal/events	(cached)	coverage: 47.1% of statements
+ok  	aegis/internal/metrics	(cached)	coverage: 69.6% of statements
+ok  	aegis/internal/objectstore	0.273s	coverage: 58.0% of statements
+ok  	aegis/internal/scanner	(cached)	coverage: 68.5% of statements

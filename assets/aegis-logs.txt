@@ -1,5 +1,5 @@
 2023-05-09T17:50:12.983Z	INFO	Starting Aegis\
-2023-05-09T17:50:12.984Z	INFO	Config	\{"config": \{"LoggerLevel":"debug","LoggerEncoding":"console","RemoveAfterScan":"true","CleanupPolicy":"remove","QuarantineBucket":"","MinioEndpoint":"aegis-minio.default.svc.cluster.local:9000","MinioAccessKey":"minioadmin","MinioSecretKey":"minioadmin","MinioUseSSL":false,"KafkaBrokers":["aegis-kafka.default.svc.cluster.local:9092"],"KafkaTopic":"minio-put-events","KafkaGroupID":"g1","KafkaMaxBytes":10,"ClamAVRemoveAfterScan":true,"ClamAVDateTimeFormat":"01-02-2006 15:04:05","ClamAVPath":"cache","PrometheusEndpoint":"0.0.0.0:9090","PrometheusPath":"/metrics","PostgresqlUsername":"postgres","PostgresqlPassword":"postgres","PostgresqlEndpoint":"aegis-postgresql.default.svc.cluster.local:5432","PostgresqlDatabase":"aegis_antivirus","PostgresqlTable":"aegis_audit_logs"\}\}\
+2023-05-09T17:50:12.984Z	INFO	Config	\{"config": \{"..."\}\}\
 2023-05-09T17:50:12.984Z	DEBUG	Creating metric manager and collectors\
 2023-05-09T17:50:12.984Z	DEBUG	Creating Prometheus Server\
 2023-05-09T17:50:12.984Z	DEBUG	Creating Metrics Manager\
@@ -10,7 +10,7 @@
 2023-05-09T17:50:12.998Z	DEBUG	Creating MinIO client\
 2023-05-09T17:50:12.998Z	DEBUG	Creating object store\
 2023-05-09T17:50:12.998Z	DEBUG	Creating events system\
-2023-05-09T17:50:12.998Z	DEBUG	Creating Kafka Consumer	\{"brokers": ["aegis-kafka.default.svc.cluster.local:9092"], "topic": "minio-put-events"\}\
+2023-05-09T17:50:12.998Z	DEBUG	Creating Kafka Consumer	\{"brokers": ["..."], "topic": "..."\}\
 2023-05-09T17:50:12.998Z	DEBUG	Creating Event Manager\
 2023-05-09T17:50:12.998Z	DEBUG	Creating scanning workflow\
 2023-05-09T17:50:12.998Z	DEBUG	Creating dispatcher\
@@ -19,21 +19,21 @@
 2023-05-09T17:50:12.998Z	DEBUG	Starting Metrics Manager\
 2023-05-09T17:50:12.998Z	DEBUG	Exposing metrics at	\{"endpoint": "0.0.0.0:9090"\}\
 2023-05-09T17:50:12.998Z	DEBUG	Reading message from Kafka\
-2023-05-09T17:50:41.285Z	INFO	Message	\{"message": "\{\\"EventName\\":\\"s3:ObjectCreated:Put\\",\\"Key\\":\\"test-bucket/2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b\\",\\"Records\\":[\{\\"eventVersion\\":\\"2.0\\",\\"eventSource\\":\\"minio:s3\\",\\"awsRegion\\":\\"\\",\\"eventTime\\":\\"2023-05-09T17:50:32.679Z\\",\\"eventName\\":\\"s3:ObjectCreated:Put\\",\\"userIdentity\\":\{\\"principalId\\":\\"minioadmin\\"\},\\"requestParameters\\":\{\\"principalId\\":\\"minioadmin\\",\\"region\\":\\"\\",\\"sourceIPAddress\\":\\"[::1]\\"\},\\"responseElements\\":\{\\"content-length\\":\\"0\\",\\"x-amz-id-2\\":\\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\\",\\"x-amz-request-id\\":\\"175D8AF7D09A7002\\",\\"x-minio-deployment-id\\":\\"6578c303-f607-4cb6-923c-82d74b1258c6\\",\\"x-minio-origin-endpoint\\":\\"http://localhost:9000\\"\},\\"s3\\":\{\\"s3SchemaVersion\\":\\"1.0\\",\\"configurationId\\":\\"Config\\",\\"bucket\\":\{\\"name\\":\\"test-bucket\\",\\"ownerIdentity\\":\{\\"principalId\\":\\"minioadmin\\"\},\\"arn\\":\\"arn:aws:s3:::test-bucket\\"\},\\"object\\":\{\\"key\\":\\"2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b\\",\\"size\\":185344,\\"eTag\\":\\"0826df3aaa157edff9c0325f298850c2\\",\\"contentType\\":\\"application/octet-stream\\",\\"userMetadata\\":\{\\"content-type\\":\\"application/octet-stream\\"\},\\"sequencer\\":\\"175D8AF7D1468D88\\"\}\},\\"source\\":\{\\"host\\":\\"[::1]\\",\\"port\\":\\"\\",\\"userAgent\\":\\"MinIO (linux; arm64) minio-go/v7.0.49 MinIO Console/(dev)\\"\}\}]\}"\}\
+2023-05-09T17:50:41.285Z	INFO	Message	\{"message": "..."\}\
 2023-05-09T17:50:41.286Z	DEBUG	Incrementing kafka message received counter\
 2023-05-09T17:50:41.286Z	DEBUG	Reading message from Kafka\
-2023-05-09T17:50:41.286Z	DEBUG	Getting object from object store	\{"bucketName": "test-bucket", "objectKey": "2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b"\}\
-2023-05-09T17:50:41.286Z	DEBUG	Getting object	\{"bucketName": "test-bucket", "objectKey": "2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b"\}\
+2023-05-09T17:50:41.286Z	DEBUG	Getting object from object store	\{"bucketName": "...", "objectKey": "..."\}\
+2023-05-09T17:50:41.286Z	DEBUG	Getting object	\{"bucketName": "test-bucket", "objectKey": "..."\}\
 2023-05-09T17:50:41.299Z	DEBUG	Incrementing get object counter\
-2023-05-09T17:50:41.299Z	DEBUG	Saving byte stream to file	\{"bucketName": "test-bucket", "objectKey": "2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b"\}\
-2023-05-09T17:50:41.299Z	DEBUG	Cache path	\{"cachePath": "cache/test-bucket/2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b"\}\
-2023-05-09T17:50:41.301Z	DEBUG	Scanning file with antiviruses	\{"antiviruses": [\{\}], "bucketName": "test-bucket", "objectKey": "2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b"\}\
-2023-05-09T17:50:41.361Z	DEBUG	clamdscan output	\{"output": "/app/cache/test-bucket/2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b: OK\\n\\n----------- SCAN SUMMARY -----------\\nInfected files: 0\\nTime: 0.045 sec (0 m 0 s)\\nStart Date: 2023:05:09 17:50:41\\nEnd Date:   2023:05:09 17:50:41\\n"\}\
+2023-05-09T17:50:41.299Z	DEBUG	Saving byte stream to file	\{"bucketName": "test-bucket", "objectKey": ..."\}\
+2023-05-09T17:50:41.299Z	DEBUG	Cache path	\{"cachePath": "..."\}\
+2023-05-09T17:50:41.301Z	DEBUG	Scanning file with antiviruses	\{}}\
+2023-05-09T17:50:41.361Z	DEBUG	clamdscan output	\{"output": "..."\}\
 2023-05-09T17:50:41.361Z	DEBUG	Incrementing files scanned counter\
 2023-05-09T17:50:41.361Z	DEBUG	Adding audit log\
-2023-05-09T17:50:41.369Z	INFO	Clean file	\{"bucketName": "test-bucket", "objectKey": "2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b"\}\
+2023-05-09T17:50:41.369Z	INFO	Clean file	\{"bucketName": "test-bucket", "objectKey": "..."\}\
 2023-05-09T17:50:41.369Z	DEBUG	Incrementing clean files scanned counter\
 2023-05-09T17:50:41.369Z	DEBUG	Cleaning up	\{"cleanupPolicy": "remove"\}\
-2023-05-09T17:50:41.369Z	DEBUG	Clean object, not removing	\{"bucketName": "test-bucket", "objectKey": "2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b"\}\
-2023-05-09T17:50:41.369Z	DEBUG	Removing file from cache	\{"cachePath": "cache/test-bucket/2e4319ff62c03a539b2b2f71768a0cfc0adcaedbcca69dbf235081fe2816248b"\}\
+2023-05-09T17:50:41.369Z	DEBUG	Clean object, not removing	\{"bucketName": "test-bucket", "objectKey": "..."\}\
+2023-05-09T17:50:41.369Z	DEBUG	Removing file from cache	\{"cachePath": "..."\}\
 }

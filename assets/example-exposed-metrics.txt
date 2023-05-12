@@ -36,7 +36,7 @@ aegis_scanner_time_count 0
 # HELP aegis_scanner_total_scans Total number of scans performed by Aegis
 # TYPE aegis_scanner_total_scans counter
 aegis_scanner_total_scans 0
-# HELP go_gc_duration_seconds A summary of the pause duration of garbage collection cycles.
+# HELP go_gc_duration_seconds Pause duration of garbage collection cycles.
 # TYPE go_gc_duration_seconds summary
 go_gc_duration_seconds{quantile="0"} 0
 go_gc_duration_seconds{quantile="0.25"} 0
@@ -57,13 +57,13 @@ go_memstats_alloc_bytes 1.363496e+06
 # HELP go_memstats_alloc_bytes_total Total number of bytes allocated, even if freed.
 # TYPE go_memstats_alloc_bytes_total counter
 go_memstats_alloc_bytes_total 1.363496e+06
-# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table.
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes in profiling bucket hash table.
 # TYPE go_memstats_buck_hash_sys_bytes gauge
 go_memstats_buck_hash_sys_bytes 4941
 # HELP go_memstats_frees_total Total number of frees.
 # TYPE go_memstats_frees_total counter
 go_memstats_frees_total 2757
-# HELP go_memstats_gc_sys_bytes Number of bytes used for garbage collection system metadata.
+# HELP go_memstats_gc_sys_bytes Number of bytes in garbage collection system metadata.
 # TYPE go_memstats_gc_sys_bytes gauge
 go_memstats_gc_sys_bytes 3.745832e+06
 # HELP go_memstats_heap_alloc_bytes Number of heap bytes allocated and still in use.
@@ -84,7 +84,7 @@ go_memstats_heap_released_bytes 3.678208e+06
 # HELP go_memstats_heap_sys_bytes Number of heap bytes obtained from system.
 # TYPE go_memstats_heap_sys_bytes gauge
 go_memstats_heap_sys_bytes 7.569408e+06
-# HELP go_memstats_last_gc_time_seconds Number of seconds since 1970 of last garbage collection.
+# HELP go_memstats_last_gc_time_seconds Seconds since 1970 of last garbage collection.
 # TYPE go_memstats_last_gc_time_seconds gauge
 go_memstats_last_gc_time_seconds 0
 # HELP go_memstats_lookups_total Total number of pointer lookups.
@@ -96,16 +96,16 @@ go_memstats_mallocs_total 19403
 # HELP go_memstats_mcache_inuse_bytes Number of bytes in use by mcache structures.
 # TYPE go_memstats_mcache_inuse_bytes gauge
 go_memstats_mcache_inuse_bytes 12000
-# HELP go_memstats_mcache_sys_bytes Number of bytes used for mcache structures obtained from system.
+# HELP go_memstats_mcache_sys_bytes Bytes in mcache structures obtained from system.
 # TYPE go_memstats_mcache_sys_bytes gauge
 go_memstats_mcache_sys_bytes 15600
-# HELP go_memstats_mspan_inuse_bytes Number of bytes in use by mspan structures.
+# HELP go_memstats_mspan_inuse_bytes Bytes in mspan structures.
 # TYPE go_memstats_mspan_inuse_bytes gauge
 go_memstats_mspan_inuse_bytes 95184
-# HELP go_memstats_mspan_sys_bytes Number of bytes used for mspan structures obtained from system.
+# HELP go_memstats_mspan_sys_bytes Bytes in mspan structures obtained from system.
 # TYPE go_memstats_mspan_sys_bytes gauge
 go_memstats_mspan_sys_bytes 97632
-# HELP go_memstats_next_gc_bytes Number of heap bytes when next garbage collection will take place.
+# HELP go_memstats_next_gc_bytes Heap Bytes when next garbage collection happens.
 # TYPE go_memstats_next_gc_bytes gauge
 go_memstats_next_gc_bytes 4.194304e+06
 # HELP go_memstats_other_sys_bytes Number of bytes used for other system allocations.
@@ -114,7 +114,7 @@ go_memstats_other_sys_bytes 1.300043e+06
 # HELP go_memstats_stack_inuse_bytes Number of bytes in use by the stack allocator.
 # TYPE go_memstats_stack_inuse_bytes gauge
 go_memstats_stack_inuse_bytes 819200
-# HELP go_memstats_stack_sys_bytes Number of bytes obtained from system for stack allocator.
+# HELP go_memstats_stack_sys_bytes Bytes obtained from system for stack allocator.
 # TYPE go_memstats_stack_sys_bytes gauge
 go_memstats_stack_sys_bytes 819200
 # HELP go_memstats_sys_bytes Number of bytes obtained from system.
@@ -123,10 +123,10 @@ go_memstats_sys_bytes 1.3552656e+07
 # HELP go_threads Number of OS threads created.
 # TYPE go_threads gauge
 go_threads 12
-# HELP promhttp_metric_handler_requests_in_flight Current number of scrapes being served.
+# HELP promhttp_metric_handler_requests_in_flight Current scrapes being served.
 # TYPE promhttp_metric_handler_requests_in_flight gauge
 promhttp_metric_handler_requests_in_flight 1
-# HELP promhttp_metric_handler_requests_total Total number of scrapes by HTTP status code.
+# HELP promhttp_metric_handler_requests_total Total scrapes by HTTP status code.
 # TYPE promhttp_metric_handler_requests_total counter
 promhttp_metric_handler_requests_total{code="200"} 0
 promhttp_metric_handler_requests_total{code="500"} 0
