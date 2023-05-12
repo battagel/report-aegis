@@ -544,6 +544,8 @@ with instead of MinIO. This means that all puts go through Aegis before being
 uploaded to the object store. The candidate design is shown in Figure
 \ref{fig:uploadQueueArch}.
 
+\pagebreak
+
 \begin{wrapfigure}{r}{0.45\textwidth}
   \centering \includegraphics[scale=.4]{diagrams/upload-queue.png}
   \caption{Upload Queue Architecture}
@@ -584,6 +586,8 @@ Aegis can scan the object and decide whether to allow the object to be written
 to the store or to quarantine the object. The candidate design is shown in
 Figure \ref{fig:writeInterceptArch}.
 
+\pagebreak
+
 \begin{wrapfigure}{r}{0.4\textwidth}
   \centering \includegraphics[scale=.4]{diagrams/write-intercept.png}
   \caption{Write Interception Architecture}
@@ -616,6 +620,8 @@ The final candidate design distributes Aegis onto each node in the object store.
 This means that each node has a local instance of Aegis that is responsible for
 scanning objects before they are written to the store. The candidate design is
 shown in Figure \ref{fig:perNodeArch}.
+
+\pagebreak
 
 \begin{wrapfigure}{r}{0.5\textwidth}
   \centering \includegraphics[scale=.4]{diagrams/per-node.png}
@@ -952,7 +958,7 @@ diagram at Figures \ref{appendix:general-sequence} and
 \ref{appendix:flow-diagram} respectively.
 
 \begin{wrapfigure}{r}{0.4\textwidth}
-  \centering \includegraphics[scale=.3]{diagrams/file-struct.png}
+  \centering \includegraphics[scale=.21]{diagrams/file-struct.png}
   \caption{Aegis' Initial File Structure}
   \label{fig:file-struct}
 \end{wrapfigure}
@@ -2573,7 +2579,11 @@ area. Below is a list of the issues identified.
         addition, warning messages could be added to inform the user of infect
         files. Depending on the production use, this feature could be valuable.
   \item Store the scan result in metadata rather than tagging to improve
-        immutability of tags.
+        immutability of tags. This might also raise the ability for bad actors
+        to edit object metadata outside of MinIO.
+  \item Unscanned files are currently not tagged with anything to indicate that
+        they have not been scanned. This could be useful for auditing or user
+        feedback purposes.
   \item Calculate the hash of a object, upon performing put, inside of MinIO
         using lambda functions \citep{minio-lambda}. This reduces the size of
         the download required to scan a file. However, removes the ability for any
